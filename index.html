@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RailHygiene - Crowdsourced Hygiene Ratings for Indian Railways Coaches</title>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+  <link rel="manifest" href="assets/site.webmanifest">
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 1200px;
+      margin: auto;
+      padding: 30px 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .text-section {
+      flex: 1;
+      min-width: 300px;
+      padding: 20px;
+    }
+
+    .app-icon {
+      width: 100px;
+      height: 100px;
+      border-radius: 25%;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 10px 0 0;
+      color: #111;
+    }
+
+    .subtitle {
+      font-size: 1.2em;
+      color: #555;
+      margin: 10px 0 20px;
+    }
+
+    .description {
+      font-size: 1.1em;
+      line-height: 1.6;
+      color: #555;
+      max-width: 650px;
+    }
+
+    .play-store-button {
+      display: inline-block;
+      margin: 30px 0;
+      transition: transform 0.2s ease-out;
+    }
+
+    .play-store-button:hover {
+      transform: scale(1.05);
+    }
+
+    .play-store-button img {
+      height: 60px;
+      width: auto;
+      vertical-align: middle;
+    }
+    
+    .phone-mockup {
+      flex: 1;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column; 
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .phone-container {
+      position: relative;
+      width: 300px; 
+    }
+
+    .phone-frame-image {
+      width: 100%;
+      height: auto;
+      user-select: none;
+    }
+    
+    .carousel-track-wrapper {
+      position: absolute;
+      top: 4px;       
+      left: 9px;      
+      width: 288px;   
+      height: 635px;  
+      overflow: hidden;
+      border-radius: 30px; 
+    }
+    
+    .carousel-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.8s ease-in-out;
+    }
+
+    .carousel-track img {
+      flex: 0 0 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #slide-description {
+      text-align: center;
+      margin-top: 25px;
+      max-width: 300px;
+      min-height: 170px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      opacity: 1;
+      transition: opacity 0.4s ease-in-out;
+    }
+
+    
+    #slide-description.fade-out {
+        opacity: 0;
+    }
+
+    #slide-title {
+      font-size: 1.4em;
+      color: #333;
+      margin: 0 0 5px 0;
+    }
+
+    #slide-text {
+      font-size: 1em;
+      color: #666;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+
+    .footer {
+      text-align: center;
+      margin-top: 60px;
+      padding: 20px;
+      font-size: 0.9em;
+      color: #888;
+    }
+
+    .footer a {
+      color: #666;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .dashboard-button {
+      display: inline-block;
+      margin: 30px 0 30px 15px;
+      padding: 18px 28px;
+      background-color: #fff;
+      color: #1877f2;
+      border: 1px solid #ddd;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: all 0.2s ease-out;
+      vertical-align: middle;
+    }
+
+    .dashboard-button:hover {
+      transform: scale(1.05);
+      border-color: #1877f2;
+      background-color: #f7faff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="text-section">
+      <img src="assets/logo.png" alt="RailHygiene App Icon" class="app-icon"/>
+      <h1>RailHygiene</h1>
+      <p class="subtitle">Cleaner Train Journeys, Powered by You.</p>
+      <p class="description">
+        Ever wondered about the cleanliness of your train coach before you board? RailHygiene is a community-driven app that allows passengers to anonymously rate and review the hygiene of train coaches across Indian Railways. Check past reviews, contribute your own feedback, and help make train travel better for everyone.
+      </p>
+      <a href="https://play.google.com/store/apps/details?id=com.nish.railhygiene" class="play-store-button">
+        <img src="assets/google_play_icon.png" alt="Get it on Google Play">
+      </a>
+      <a href="./dashboard.html" class="dashboard-button">
+      View Live Data
+      </a>
+    </div>
+
+    
+    <div class="phone-mockup">
+      <div class="phone-container">
+        <img src="assets/phone-frame.png" alt="Phone Frame" class="phone-frame-image">
+        
+        <div class="carousel-track-wrapper">
+          <div class="carousel-track" id="carouselTrack">
+            <img src="screenshots/screenshot1.png" alt="Screenshot 1" />
+            <img src="screenshots/screenshot2.png" alt="Screenshot 2"/>
+            <img src="screenshots/screenshot3.png" alt="Screenshot 3"/>
+            <img src="screenshots/screenshot4.png" alt="Screenshot 4"/>
+            <img src="screenshots/screenshot5.png" alt="Screenshot 5"/>
+            <img src="screenshots/screenshot6.png" alt="Screenshot 6"/>
+            <img src="screenshots/screenshot7.png" alt="Screenshot 7"/>
+            <img src="screenshots/screenshot8.png" alt="Screenshot 8"/>
+            <img src="screenshots/screenshot9.png" alt="Screenshot 9"/>
+            <img src="screenshots/screenshot10.png" alt="Screenshot 10"/>
+            <img src="screenshots/screenshot11.png" alt="Screenshot 11"/>
+          </div>
+        </div>
+      </div>
+
+      <div id="slide-description">
+        <h3 id="slide-title"></h3>
+        <p id="slide-text"></p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <a href="./privacy.html">Privacy Policy</a> | <a href="./terms.html">Terms of Use</a>
+    <p>© 2025 RailHygiene</p>
+  </footer>
+
+  <!-- JAVASCRIPT UPDATED TO HANDLE TEXT SYNCHRONIZATION -->
+  <script>
+    const track = document.getElementById('carouselTrack');
+    const slides = track.querySelectorAll('img');
+    
+    const descriptionContainer = document.getElementById('slide-description');
+    const slideTitle = document.getElementById('slide-title');
+    const slideText = document.getElementById('slide-text');
+
+    const slideDescriptions = [
+      { title: "Search a PNR or Train", text: "Quickly search for any train or PNR ." },
+      { title: "Fetch your PNR", text: "Fetch your journey details on Journey Card." },
+      { title: "Check Past Feedbacks", text: "View overall ratings for your coach from fellow passengers before you board." },
+      { title: "Give Feedback", text: "Use Journey Card to give feedback for your coach." },
+	    { title: "Give Feedback", text: "Quickly and anonymously review the cleanliness of the coach you traveled in." },
+      { title: "Help the Community", text: "Each feedback contributes to a transparent, community driven database of coach hygiene across IR." },
+      { title: "Filter Trains", text: "Using Train Number or Name" },
+      { title: "Search a Train", text: "Look up any train and instantly see a complete breakdown of hygiene scores for all its coaches."},
+      { title: "View Complete Train Hygiene Ratings", text: "Coach wise detailed ratings for all available coaches" },
+	    { title: "Detailed Train Hygiene Ratings", text: "Tap and view more details" },
+	    { title: "View Hygiene Ratings for all coaches", text: "Multiple coaches view" }
+    ];
+
+    let index = 0;
+    
+    function updateContent() {
+      slideTitle.textContent = slideDescriptions[index].title;
+      slideText.textContent = slideDescriptions[index].text;
+      track.style.transform = `translateX(-${index * 100}%)`;
+    }
+    
+    function cycleContent() {
+      descriptionContainer.classList.add('fade-out');
+      
+      setTimeout(() => {
+          index = (index + 1) % slides.length;
+          updateContent();
+          descriptionContainer.classList.remove('fade-out');
+      }, 400);
+    }
+
+    updateContent();
+
+    setInterval(cycleContent, 3000);
+  </script>
+</body>
+</html>
+
+
