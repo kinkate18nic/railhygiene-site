@@ -152,25 +152,6 @@
       text-align: center;
     }
 
-
-    .footer {
-      text-align: center;
-      margin-top: 60px;
-      padding: 20px;
-      font-size: 0.9em;
-      color: #888;
-    }
-
-    .footer a {
-      color: #666;
-      text-decoration: none;
-      margin: 0 10px;
-    }
-
-    .footer a:hover {
-      text-decoration: underline;
-    }
-
     .dashboard-button {
       display: inline-block;
       margin: 30px 0 30px 15px;
@@ -191,6 +172,59 @@
       border-color: #1877f2;
       background-color: #f7faff;
     }
+
+    /* === NEW CSS FOR VIDEO SECTION === */
+    .video-section {
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .video-section h2 {
+      font-size: 2em;
+      color: #111;
+      margin-bottom: 30px;
+    }
+
+    .video-wrapper {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 Aspect Ratio */
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    /* === END OF NEW CSS === */
+
+    .footer {
+      text-align: center;
+      margin-top: 60px;
+      padding: 20px;
+      font-size: 0.9em;
+      color: #888;
+    }
+
+    .footer a {
+      color: #666;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -209,7 +243,6 @@
       View Live Data
       </a>
     </div>
-
     
     <div class="phone-mockup">
       <div class="phone-container">
@@ -238,6 +271,21 @@
       </div>
     </div>
   </div>
+
+  <!-- === NEW VIDEO SECTION START === -->
+  <div class="video-section">
+    <h2>See RailHygiene in Action</h2>
+    <div class="video-wrapper">
+      <iframe 
+        src="https://www.youtube.com/embed/IIgw3UGdBOw" 
+        title="RailHygiene App Demo" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+  <!-- === NEW VIDEO SECTION END === -->
 
   <footer class="footer">
     <a href="./privacy.html">Privacy Policy</a> | <a href="./terms.html">Terms of Use</a>
@@ -291,6 +339,3 @@
   </script>
 </body>
 </html>
-
-
-
