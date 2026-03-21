@@ -10,66 +10,93 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
   <link rel="manifest" href="assets/site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --primary-dark: #0f172a;
+      --primary-blue: #1d4ed8;
+      --primary-blue-hover: #1e40af;
+      --bg-color: #f8fafc;
+      --text-main: #1e293b;
+      --text-muted: #475569;
+      --card-bg: #ffffff;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f9;
-      color: #333;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      overflow-x: hidden;
     }
 
     .container {
       display: flex;
       flex-wrap: wrap;
       max-width: 1200px;
-      margin: auto;
-      padding: 30px 20px;
+      margin: 0 auto;
+      padding: 60px 20px;
       align-items: center;
       justify-content: space-between;
+      gap: 40px;
     }
 
     .text-section {
       flex: 1;
       min-width: 300px;
-      padding: 20px;
+      padding: 20px 0;
     }
 
     .app-icon {
       width: 100px;
       height: 100px;
       border-radius: 25%;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
     }
 
     h1 {
-      font-size: 2.5em;
-      margin: 10px 0 0;
-      color: #111;
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--primary-dark);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
     }
 
     .subtitle {
-      font-size: 1.2em;
-      color: #555;
-      margin: 10px 0 20px;
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: var(--primary-blue);
+      margin: 15px 0 25px;
     }
 
     .description {
-      font-size: 1.1em;
-      line-height: 1.6;
-      color: #555;
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: var(--text-muted);
       max-width: 650px;
+      margin-bottom: 35px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
     .play-store-button {
       display: inline-block;
-      margin: 30px 0;
       transition: transform 0.2s ease-out;
     }
 
     .play-store-button:hover {
-      transform: scale(1.05);
+      transform: translateY(-2px);
     }
 
     .play-store-button img {
@@ -78,6 +105,29 @@
       vertical-align: middle;
     }
     
+    .dashboard-button {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 28px;
+      height: 60px;
+      background-color: var(--card-bg);
+      color: var(--primary-blue);
+      border: 2px solid #e2e8f0;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      transition: all 0.2s ease-out;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      box-sizing: border-box;
+    }
+
+    .dashboard-button:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary-blue);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
     .phone-mockup {
       flex: 1;
       min-width: 300px;
@@ -85,18 +135,21 @@
       flex-direction: column; 
       justify-content: center;
       align-items: center;
-      padding: 20px;
     }
     
     .phone-container {
       position: relative;
-      width: 300px; 
+      width: 300px;
+      transform-origin: top center;
+      filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
     }
 
     .phone-frame-image {
       width: 100%;
       height: auto;
       user-select: none;
+      position: relative;
+      z-index: 10;
     }
     
     .carousel-track-wrapper {
@@ -107,12 +160,14 @@
       height: 635px;  
       overflow: hidden;
       border-radius: 30px; 
+      z-index: 1;
+      background: #000;
     }
     
     .carousel-track {
       display: flex;
       height: 100%;
-      transition: transform 0.8s ease-in-out;
+      transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     .carousel-track img {
@@ -123,111 +178,315 @@
 
     #slide-description {
       text-align: center;
-      margin-top: 25px;
-      max-width: 300px;
-      min-height: 170px;
+      margin-top: 30px;
+      max-width: 320px;
+      min-height: 120px;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
       align-items: center;
       opacity: 1;
       transition: opacity 0.4s ease-in-out;
     }
 
-    
     #slide-description.fade-out {
-        opacity: 0;
+      opacity: 0;
     }
 
     #slide-title {
-      font-size: 1.4em;
-      color: #333;
-      margin: 0 0 5px 0;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin: 0 0 8px 0;
     }
 
     #slide-text {
-      font-size: 1em;
-      color: #666;
-      line-height: 1.5;
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: 0;
       text-align: center;
     }
 
-    .dashboard-button {
+    /* --- Sections --- */
+    .section {
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 50px;
+      max-width: 800px;
+      margin-inline: auto;
+    }
+
+    .section-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 15px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* --- Features Grid --- */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid #f1f5f9;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
       display: inline-block;
-      margin: 30px 0 30px 15px;
-      padding: 18px 28px;
-      background-color: #fff;
-      color: #1877f2;
-      border: 1px solid #ddd;
-      text-decoration: none;
-      font-weight: bold;
-      border-radius: 8px;
-      font-size: 1em;
-      transition: all 0.2s ease-out;
-      vertical-align: middle;
     }
 
-    .dashboard-button:hover {
-      transform: scale(1.05);
-      border-color: #1877f2;
-      background-color: #f7faff;
+    .feature-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-bottom: 12px;
     }
 
-    /* === NEW CSS FOR VIDEO SECTION === */
-    .video-section {
-      max-width: 900px;
-      margin: 60px auto;
-      padding: 0 20px;
+    .feature-text {
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    /* --- Reality Section --- */
+    .reality-section {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: #fff;
+      border-radius: 24px;
+      padding: 70px 40px;
+      margin: 40px 20px;
       text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     }
 
-    .video-section h2 {
-      font-size: 2em;
-      color: #111;
-      margin-bottom: 30px;
+    .reality-content {
+      position: relative;
+      z-index: 2;
+      max-width: 850px;
+      margin: 0 auto;
+    }
+
+    .reality-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    .reality-text {
+      font-size: 1.15rem;
+      line-height: 1.8;
+      color: #cbd5e1;
+      margin-bottom: 20px;
+    }
+
+    .reality-text strong {
+      color: #f8fafc;
+    }
+
+    .reality-highlight {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 16px 28px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      margin-top: 25px;
+      font-weight: 600;
+      color: #f8fafc;
+      font-size: 1.1rem;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+
+    /* --- Video Section --- */
+    .video-section {
+      padding: 80px 20px;
+      background-color: var(--card-bg);
+      border-top: 1px solid #e2e8f0;
+      border-bottom: 1px solid #e2e8f0;
     }
 
     .video-wrapper {
       position: relative;
       overflow: hidden;
       width: 100%;
-      padding-top: 56.25%; /* 16:9 Aspect Ratio */
-      border-radius: 12px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      max-width: 900px;
+      margin: 0 auto;
+      padding-top: 50.625%; /* 16:9 Aspect Ratio on max-width 900 */
+      border-radius: 16px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      background: #000;
     }
 
     .video-wrapper iframe {
       position: absolute;
       top: 0;
       left: 0;
-      bottom: 0;
-      right: 0;
       width: 100%;
       height: 100%;
       border: none;
     }
-    /* === END OF NEW CSS === */
+    
+    @media (max-width: 900px) {
+        .video-wrapper {
+            padding-top: 56.25%;
+        }
+    }
 
+    /* --- Footer --- */
     .footer {
       text-align: center;
-      margin-top: 60px;
-      padding: 20px;
-      font-size: 0.9em;
-      color: #888;
+      padding: 50px 20px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      background: var(--bg-color);
     }
 
     .footer a {
-      color: #666;
+      color: var(--primary-blue);
       text-decoration: none;
-      margin: 0 10px;
+      font-weight: 500;
+      margin: 0 15px;
+      transition: color 0.2s;
     }
 
     .footer a:hover {
+      color: var(--primary-blue-hover);
       text-decoration: underline;
+    }
+
+    .footer-copy {
+      margin-top: 20px;
+      color: #94a3b8;
+    }
+
+    /* --- Media Queries --- */
+    @media (max-width: 992px) {
+      .container {
+        padding: 50px 20px;
+      }
+      h1 {
+        font-size: 3rem;
+      }
+      .phone-container {
+        transform: scale(0.9);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+        padding-top: 40px;
+      }
+      
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .description {
+        margin: 0 auto 30px;
+      }
+
+      .button-group {
+        justify-content: center;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .dashboard-button {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+      }
+      
+      .phone-mockup {
+        margin-top: 20px;
+      }
+
+      .phone-container {
+        transform: scale(0.85);
+      }
+
+      .section {
+        padding: 60px 20px;
+      }
+
+      .reality-section {
+        padding: 50px 20px;
+        margin: 20px 10px;
+        border-radius: 20px;
+      }
+
+      .reality-title {
+        font-size: 1.75rem;
+      }
+
+      .section-title {
+        font-size: 1.85rem;
+      }
+      
+      .video-section {
+        padding: 60px 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      
+      .phone-container {
+        transform: scale(0.75);
+        margin-bottom: -15%; /* Trim excess space from scaling */
+      }
+      
+      .reality-section {
+        margin: 20px 0;
+        border-radius: 0;
+      }
+    }
+
+    @media (max-width: 380px) {
+       .phone-container {
+          transform: scale(0.65);
+          margin-bottom: -25%;
+       }
     }
   </style>
 </head>
 <body>
+  <!-- Hero Section -->
   <div class="container">
     <div class="text-section">
       <img src="assets/logo.png" alt="RailHygiene App Icon" class="app-icon"/>
@@ -236,12 +495,14 @@
       <p class="description">
         Ever wondered about the cleanliness of your train coach before you board? RailHygiene is a community-driven app that allows passengers to anonymously rate and review the hygiene of train coaches across Indian Railways. Check past reviews, contribute your own feedback, and help make train travel better for everyone.
       </p>
-      <a href="https://play.google.com/store/apps/details?id=com.nish.railhygiene" class="play-store-button">
-        <img src="assets/google_play_icon.png" alt="Get it on Google Play">
-      </a>
-      <a href="./dashboard.html" class="dashboard-button">
-      View Live Data
-      </a>
+      <div class="button-group">
+        <a href="https://play.google.com/store/apps/details?id=com.nish.railhygiene" class="play-store-button">
+          <img src="assets/google_play_icon.png" alt="Get it on Google Play">
+        </a>
+        <a href="./dashboard.html" class="dashboard-button">
+          View Live Data
+        </a>
+      </div>
     </div>
     
     <div class="phone-mockup">
@@ -272,9 +533,57 @@
     </div>
   </div>
 
-  <!-- === NEW VIDEO SECTION START === -->
+  <!-- Features Section -->
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">Everything You Need to Know Before You Board</h2>
+      <p class="section-subtitle">RailHygiene is built to transform how we perceive and interact with train hygiene across the Indian Railways network.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3 class="feature-title">Detailed Coach Ratings</h3>
+        <p class="feature-text">Look up any train and instantly see a complete breakdown of hygiene scores for all its coaches. Make informed decisions before booking or boarding.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3 class="feature-title">100% Anonymous</h3>
+        <p class="feature-text">Your privacy matters. Submit reviews and ratings completely anonymously. We don't ask for personal data or track your individual identity.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎫</div>
+        <h3 class="feature-title">PNR & Journey Sync</h3>
+        <p class="feature-text">Fetch your PNR directly to generate your personalized Journey Card. Give feedback for your exact coach easily with an intuitive interface.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤝</div>
+        <h3 class="feature-title">Community Driven</h3>
+        <p class="feature-text">Every rating contributes to a transparent, crowdsourced database. By helping the community, you're directly responsible for raising the standard of train travel.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reality Check Section -->
+  <div class="reality-section">
+    <div class="reality-content">
+      <h2 class="reality-title">The Reality of RailHygiene</h2>
+      <p class="reality-text">
+        <strong>RailHygiene is NOT an instant problem resolver.</strong> If you need immediate assistance during your journey (like a dirty toilet or missing amenities), you should use the official <em>RailMadad</em> app.
+      </p>
+      <p class="reality-text">
+        Instead, RailHygiene acts as a long-term accountability system. By consistently logging cleanliness scores for specific coaches on specific trains, we build a permanent, public reputation for the Indian Railways fleet.
+      </p>
+      <div class="reality-highlight">
+        Our Vision: Crowdsourced transparency that naturally incentivizes better train maintenance over time.
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Section -->
   <div class="video-section">
-    <h2>See RailHygiene in Action</h2>
+    <div class="section-header">
+      <h2 class="section-title">See RailHygiene in Action</h2>
+    </div>
     <div class="video-wrapper">
       <iframe 
         src="https://www.youtube.com/embed/IIgw3UGdBOw" 
@@ -285,14 +594,16 @@
       </iframe>
     </div>
   </div>
-  <!-- === NEW VIDEO SECTION END === -->
 
+  <!-- Footer -->
   <footer class="footer">
-    <a href="./privacy.html">Privacy Policy</a> | <a href="./terms.html">Terms of Use</a>
-    <p>© 2025 RailHygiene</p>
+    <div class="footer-links">
+      <a href="./privacy.html">Privacy Policy</a>
+      <a href="./terms.html">Terms of Use</a>
+    </div>
+    <p class="footer-copy">© 2025 RailHygiene. Not officially affiliated with Indian Railways.</p>
   </footer>
 
-  <!-- JAVASCRIPT UPDATED TO HANDLE TEXT SYNCHRONIZATION -->
   <script>
     const track = document.getElementById('carouselTrack');
     const slides = track.querySelectorAll('img');
@@ -302,22 +613,23 @@
     const slideText = document.getElementById('slide-text');
 
     const slideDescriptions = [
-      { title: "Search a PNR or Train", text: "Quickly search for any train or PNR ." },
-      { title: "Fetch your PNR", text: "Fetch your journey details on Journey Card." },
-      { title: "Check Past Feedbacks", text: "View overall ratings for your coach from fellow passengers before you board." },
-      { title: "Give Feedback", text: "Use Journey Card to give feedback for your coach." },
-	    { title: "Give Feedback", text: "Quickly and anonymously review the cleanliness of the coach you traveled in." },
-      { title: "Help the Community", text: "Each feedback contributes to a transparent, community driven database of coach hygiene across IR." },
-      { title: "Filter Trains", text: "Using Train Number or Name" },
-      { title: "Search a Train", text: "Look up any train and instantly see a complete breakdown of hygiene scores for all its coaches."},
-      { title: "View Complete Train Hygiene Ratings", text: "Coach wise detailed ratings for all available coaches" },
-	    { title: "Detailed Train Hygiene Ratings", text: "Tap and view more details" },
-	    { title: "View Hygiene Ratings for all coaches", text: "Multiple coaches view" }
+        { title: "Search a PNR or Train", text: "Quickly search for any train or PNR." },
+        { title: "Fetch your PNR", text: "Fetch your journey details on your Journey Card." },
+        { title: "Check Past Feedbacks", text: "View overall ratings for your coach from fellow passengers before you board." },
+        { title: "Give Feedback", text: "Use your Journey Card to give feedback for your coach." },
+        { title: "Anonymously Review", text: "Quickly and anonymously review the cleanliness of the coach you traveled in." },
+        { title: "Help the Community", text: "Each feedback contributes to a transparent database of coach hygiene across IR." },
+        { title: "Filter Trains", text: "Easily filter using Train Number or Name." },
+        { title: "Search a Train", text: "Look up any train and instantly see hygiene scores for its coaches."},
+        { title: "View Complete Ratings", text: "Coach-wise detailed ratings for all available coaches." },
+        { title: "Detailed Hygiene Ratings", text: "Tap on any coach to view more granular details." },
+        { title: "Overview of all coaches", text: "A seamless multiple-coaches view." }
     ];
 
     let index = 0;
     
     function updateContent() {
+      if (slides.length === 0) return;
       slideTitle.textContent = slideDescriptions[index].title;
       slideText.textContent = slideDescriptions[index].text;
       track.style.transform = `translateX(-${index * 100}%)`;
@@ -330,12 +642,14 @@
           index = (index + 1) % slides.length;
           updateContent();
           descriptionContainer.classList.remove('fade-out');
-      }, 400);
+      }, 400); // Wait for fade out
     }
 
+    // Initialize content
     updateContent();
 
-    setInterval(cycleContent, 3000);
+    // Start cycle
+    setInterval(cycleContent, 3500);
   </script>
 </body>
 </html>
