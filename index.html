@@ -483,9 +483,61 @@
           margin-bottom: -25%;
        }
     }
+
+    /* --- Navigation --- */
+    .main-nav {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid #e2e8f0;
+      padding: 15px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-blue);
+    }
+
+    @media (max-width: 600px) {
+      .nav-container {
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 <body>
+  <!-- Navigation bar -->
+  <header class="main-nav">
+    <div class="nav-container">
+      <div class="nav-links">
+        <a href="./index.html">Home</a>
+        <a href="./railmadad-vs-railhygiene.html">RailHygiene vs RailMadad</a>
+      </div>
+    </div>
+  </header>
+
   <!-- Hero Section -->
   <div class="container">
     <div class="text-section">
