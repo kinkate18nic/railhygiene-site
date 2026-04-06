@@ -525,7 +525,59 @@
         justify-content: center;
       }
     }
+
+    /* --- FAQ Section --- */
+    .faq-section {
+      padding: 80px 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .faq-item {
+      background: var(--card-bg);
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .faq-question {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    .faq-answer {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      margin: 0;
+    }
   </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+      "@type": "Question",
+      "name": "How do I check train hygiene?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "To check the historical cleanliness of your specific coach, you can enter your PNR into the RailHygiene site or search by Train Number to see past community ratings."
+      }
+    }, {
+      "@type": "Question",
+      "name": "Are train coach ratings anonymous?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, all train coach ratings submitted through RailHygiene are completely anonymous. We do not track or share your individual identity."
+      }
+    }]
+  }
+  </script>
 </head>
 <body>
   <!-- Navigation bar -->
@@ -628,6 +680,21 @@
       <div class="reality-highlight">
         Our Vision: Crowdsourced transparency that naturally incentivizes better train maintenance over time.
       </div>
+    </div>
+  </div>
+
+  <!-- FAQ Section -->
+  <div class="faq-section">
+    <div class="section-header">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-question">How do I check train hygiene?</h3>
+      <p class="faq-answer">To check the historical cleanliness of your specific coach, you can enter your PNR into the RailHygiene site or search by Train Number to see past community ratings.</p>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-question">Are train coach ratings anonymous?</h3>
+      <p class="faq-answer">Yes, all train coach ratings submitted through RailHygiene are completely anonymous. We do not track or share your individual identity.</p>
     </div>
   </div>
 
