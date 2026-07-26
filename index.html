@@ -3,10 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>RailHygiene - Crowdsourced Hygiene Ratings for Indian Railways Coaches</title>
-  <meta name="description" content="Check crowdsourced hygiene ratings for Indian Railways train coaches. Enter your PNR or train number to see feedbacks." />
-	
+  <title>Indian Railways Coach Cleanliness Ratings | RailHygiene</title>
+  <meta name="description" content="Check crowdsourced hygiene ratings for Indian Railways train coaches. Enter your PNR or train number to see reviews on toilet and seat cleanliness." />
+
   <link rel="canonical" href="https://railhygiene.in/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="RailHygiene">
+  <meta property="og:title" content="Indian Railways Coach Cleanliness Ratings | RailHygiene">
+  <meta property="og:description" content="Check community cleanliness ratings for Indian Railways coaches before you board, then anonymously share your journey experience.">
+  <meta property="og:url" content="https://railhygiene.in/">
+  <meta property="og:image" content="https://railhygiene.in/assets/android-chrome-512x512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:image:alt" content="RailHygiene train coach cleanliness app icon">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Indian Railways Coach Cleanliness Ratings | RailHygiene">
+  <meta name="twitter:description" content="Check community cleanliness ratings for Indian Railways coaches and anonymously share your journey experience.">
+  <meta name="twitter:image" content="https://railhygiene.in/assets/android-chrome-512x512.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
@@ -328,6 +341,40 @@
       box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
     }
 
+    .help-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .help-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.2s ease-out, background-color 0.2s ease-out;
+    }
+
+    .help-action:hover {
+      transform: translateY(-2px);
+    }
+
+    .help-action-primary {
+      background: #fff;
+      color: #0f172a;
+    }
+
+    .help-action-secondary {
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      color: #fff;
+    }
+
     /* --- Video Section --- */
     .video-section {
       padding: 80px 20px;
@@ -561,57 +608,37 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [{
-      "@type": "Question",
-      "name": "How do I check train hygiene?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "To check the historical cleanliness of your specific coach, you can enter your PNR into the RailHygiene site or search by Train Number to see past community ratings."
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://railhygiene.in/#website",
+        "url": "https://railhygiene.in/",
+        "name": "RailHygiene",
+        "description": "Community-sourced cleanliness ratings for Indian Railways train coaches.",
+        "inLanguage": "en-IN"
+      },
+      {
+        "@type": "MobileApplication",
+        "@id": "https://railhygiene.in/#android-app",
+        "name": "RailHygiene: Train Cleanliness",
+        "description": "Check community cleanliness ratings for Indian Railways coaches and anonymously share feedback after your journey.",
+        "url": "https://railhygiene.in/",
+        "downloadUrl": "https://play.google.com/store/apps/details?id=com.nish.railhygiene",
+        "installUrl": "https://play.google.com/store/apps/details?id=com.nish.railhygiene",
+        "operatingSystem": "Android",
+        "applicationCategory": "TravelApplication",
+        "image": "https://railhygiene.in/assets/android-chrome-512x512.png",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Bareslate Studio"
+        }
       }
-    }, {
-      "@type": "Question",
-      "name": "Are train coach ratings anonymous?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes, all train coach ratings submitted through RailHygiene are completely anonymous. We do not track or share your individual identity."
-      }
-    }, {
-      "@type": "Question",
-      "name": "What specific parts of the coach can I rate?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "You can provide detailed feedback on several key hygiene parameters including the cleanliness of toilets, floors, dustbins and dustbin availability."
-      }
-    }, {
-      "@type": "Question",
-      "name": "Is RailHygiene an official Indian Railways app?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No, RailHygiene is an independent, community-driven platform. We are not officially affiliated with Indian Railways, IRCTC, or any government entity."
-      }
-    }, {
-      "@type": "Question",
-      "name": "How do I report an immediate hygiene issue during my journey?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "For immediate on-ground assistance and grievance resolution (like a dirty toilet or lack of water), please use the official Indian Railways RailMadad app. RailHygiene is designed for long-term tracking and accountability, not instant problem-solving."
-      }
-    }, {
-      "@type": "Question",
-      "name": "Do I need an account to use RailHygiene or view ratings?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No account is needed to view train hygiene ratings. You can search for any train on our platform freely. To submit a rating, you'll simply need to input a valid PNR to verify your journey."
-      }
-    }, {
-      "@type": "Question",
-      "name": "Will my PNR details be visible to others when I leave a review?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Absolutely not. Your PNR is strictly used to authenticate your journey and pinpoint the exact coach you traveled in. Once your feedback is submitted, the data is entirely aggregated and anonymized."
-      }
-    }]
+    ]
   }
   </script>
 </head>
@@ -620,7 +647,7 @@
   <header class="main-nav">
     <div class="nav-container">
       <div class="nav-links">
-        <a href="./index.html">Home</a>
+        <a href="/">Home</a>
         <a href="./railmadad-vs-railhygiene.html">RailHygiene vs RailMadad</a>
       </div>
     </div>
@@ -629,15 +656,15 @@
   <!-- Hero Section -->
   <div class="container">
     <div class="text-section">
-      <img src="assets/logo.png" alt="RailHygiene App Icon" class="app-icon"/>
+      <img src="assets/logo.png" alt="RailHygiene train coach cleanliness app icon" class="app-icon" width="256" height="256" decoding="async"/>
       <h1>RailHygiene</h1>
       <p class="subtitle">Cleaner Train Journeys, Powered by You.</p>
       <p class="description">
         Ever wondered about the cleanliness of your train coach before you board? RailHygiene is a community-driven app that allows passengers to anonymously rate and review the hygiene of train coaches across Indian Railways. Check past reviews, contribute your own feedback, and help make train travel better for everyone.
       </p>
       <div class="button-group">
-        <a href="https://play.google.com/store/apps/details?id=com.nish.railhygiene" class="play-store-button">
-          <img src="assets/google_play_icon.png" alt="Get it on Google Play">
+        <a href="https://play.google.com/store/apps/details?id=com.nish.railhygiene&amp;referrer=utm_source%3Drailhygiene_website%26utm_medium%3Dwebsite%26utm_campaign%3Dhomepage" class="play-store-button">
+          <img src="assets/google_play_icon.png" alt="Download RailHygiene on Google Play" width="312" height="92" decoding="async">
         </a>
         <a href="./dashboard.html" class="dashboard-button">
           View Live Data
@@ -647,21 +674,21 @@
     
     <div class="phone-mockup">
       <div class="phone-container">
-        <img src="assets/phone-frame.png" alt="Phone Frame" class="phone-frame-image">
+        <img src="assets/phone-frame.png" alt="" class="phone-frame-image" width="978" height="2100" decoding="async" aria-hidden="true">
         
         <div class="carousel-track-wrapper">
           <div class="carousel-track" id="carouselTrack">
-            <img src="screenshots/screenshot1.png" alt="Screenshot 1" />
-            <img src="screenshots/screenshot2.png" alt="Screenshot 2"/>
-            <img src="screenshots/screenshot3.png" alt="Screenshot 3"/>
-            <img src="screenshots/screenshot4.png" alt="Screenshot 4"/>
-            <img src="screenshots/screenshot5.png" alt="Screenshot 5"/>
-            <img src="screenshots/screenshot6.png" alt="Screenshot 6"/>
-            <img src="screenshots/screenshot7.png" alt="Screenshot 7"/>
-            <img src="screenshots/screenshot8.png" alt="Screenshot 8"/>
-            <img src="screenshots/screenshot9.png" alt="Screenshot 9"/>
-            <img src="screenshots/screenshot10.png" alt="Screenshot 10"/>
-            <img src="screenshots/screenshot11.png" alt="Screenshot 11"/>
+            <img src="screenshots/screenshot1.png" alt="Search RailHygiene by PNR or train number" width="720" height="1599" decoding="async" fetchpriority="high" />
+            <img src="screenshots/screenshot2.png" alt="RailHygiene journey card with PNR details" width="720" height="1599" loading="lazy" decoding="async"/>
+            <img src="screenshots/screenshot3.png" alt="Historical cleanliness ratings for a train coach" width="720" height="1599" loading="lazy" decoding="async"/>
+            <img src="screenshots/screenshot4.png" alt="Give cleanliness feedback from a RailHygiene journey card" width="720" height="1599" loading="lazy" decoding="async"/>
+            <img src="screenshots/screenshot5.png" alt="Anonymous train coach cleanliness review form" width="720" height="1599" loading="lazy" decoding="async"/>
+            <img src="screenshots/screenshot6.png" alt="Submitted coach hygiene feedback helping future passengers" width="720" height="1599" loading="lazy" decoding="async"/>
+            <img src="screenshots/screenshot7.png" alt="Filter Indian Railways trains by number or name" width="720" height="1599" loading="lazy" decoding="async"/>
+            <img src="screenshots/screenshot8.png" alt="Search results for an Indian Railways train" width="720" height="1599" loading="lazy" decoding="async"/>
+            <img src="screenshots/screenshot9.png" alt="Detailed coach-wise train cleanliness ratings" width="720" height="1599" loading="lazy" decoding="async"/>
+            <img src="screenshots/screenshot10.png" alt="RailHygiene language selection screen" width="720" height="1599" loading="lazy" decoding="async"/>
+            <img src="screenshots/screenshot11.png" alt="Recent train searches in the RailHygiene app" width="720" height="1599" loading="lazy" decoding="async"/>
           </div>
         </div>
       </div>
@@ -703,18 +730,22 @@
     </div>
   </div>
 
-  <!-- Reality Check Section -->
+  <!-- Immediate help and community reporting -->
   <div class="reality-section">
     <div class="reality-content">
-      <h2 class="reality-title">The Reality of RailHygiene</h2>
+      <h2 class="reality-title">Help Now, Better Information Next Time</h2>
       <p class="reality-text">
-        <strong>RailHygiene is NOT an instant problem resolver.</strong> If you need immediate assistance during your journey (like a dirty toilet or missing amenities), you should use the official <em>RailMadad</em> app.
+        If you need cleaning assistance during your journey, use the official <strong>RailMadad</strong> service or call railway helpline <strong>139</strong>.
       </p>
       <p class="reality-text">
-        Instead, RailHygiene acts as a long-term accountability system. By consistently logging cleanliness scores for specific coaches on specific trains, we build a permanent, public reputation for the Indian Railways fleet.
+        After receiving help, record the coach condition in RailHygiene. Your anonymous report gives the next passenger useful information before boarding.
       </p>
+      <div class="help-actions">
+        <a class="help-action help-action-primary" href="https://railmadad.indianrailways.gov.in/" rel="noopener">Open RailMadad</a>
+        <a class="help-action help-action-secondary" href="tel:139">Call 139</a>
+      </div>
       <div class="reality-highlight">
-        Our Vision: Crowdsourced transparency that naturally incentivizes better train maintenance over time.
+        RailHygiene is an independent community platform and does not resolve railway complaints.
       </div>
     </div>
   </div>
@@ -742,7 +773,7 @@
     </div>
     <div class="faq-item">
       <h3 class="faq-question">How do I report an immediate hygiene issue during my journey?</h3>
-      <p class="faq-answer">For immediate on-ground assistance and grievance resolution (like a dirty toilet or lack of water), please use the official Indian Railways RailMadad app. RailHygiene is designed for long-term tracking and accountability, not instant problem-solving.</p>
+      <p class="faq-answer">Use the official Indian Railways RailMadad service or call 139 for immediate assistance. You can then record the coach condition in RailHygiene to help future passengers.</p>
     </div>
     <div class="faq-item">
       <h3 class="faq-question">Do I need an account to use RailHygiene or view ratings?</h3>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,follow">
+  <title>Open Train Ratings in RailHygiene</title>
+  <meta name="description" content="Open a train hygiene rating directly in the RailHygiene Android app.">
+  <link rel="icon" href="../assets/favicon.ico">
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #fdfbff;
+      color: #1a1c1e;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: #fdfbff;
+    }
+
+    main {
+      width: min(100%, 520px);
+      padding: 32px;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(0, 29, 54, 0.12);
+      text-align: center;
+    }
+
+    img {
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+    }
+
+    h1 {
+      margin: 20px 0 10px;
+      font-size: 1.75rem;
+      line-height: 1.2;
+    }
+
+    p {
+      margin: 0;
+      color: #43474e;
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: grid;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    a {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      padding: 0 20px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .primary {
+      background: #0061a4;
+      color: #fff;
+    }
+
+    .secondary {
+      border: 1px solid #0061a4;
+      color: #0061a4;
+    }
+
+    .note {
+      margin-top: 20px;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="../assets/logo.png" alt="RailHygiene app icon">
+    <h1 id="title">Open train ratings</h1>
+    <p id="description">Continue in RailHygiene to view available coach hygiene reports.</p>
+    <div class="actions">
+      <a id="open-app" class="primary" href="https://railhygiene.in/open">Open RailHygiene</a>
+      <a class="secondary" href="https://play.google.com/store/apps/details?id=com.nish.railhygiene&amp;referrer=utm_source%3Drailhygiene_app_link%26utm_medium%3Dwebsite%26utm_campaign%3Dapp_link_fallback">Get the Android app</a>
+    </div>
+    <p class="note">RailHygiene is an independent community platform.</p>
+  </main>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const train = params.get("train");
+    const isValidTrain = /^\d{5}$/.test(train || "");
+    const target = new URL("https://railhygiene.in/open");
+
+    if (isValidTrain) {
+      target.searchParams.set("train", train);
+      document.getElementById("title").textContent = `Open ratings for train ${train}`;
+      document.getElementById("description").textContent =
+        "Continue in RailHygiene to view available coach hygiene reports for this train.";
+    }
+
+    document.getElementById("open-app").href = target.toString();
+  </script>
+</body>
+</html>

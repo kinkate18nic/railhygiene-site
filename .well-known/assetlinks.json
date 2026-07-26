@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.nish.railhygiene",
+      "sha256_cert_fingerprints": [
+        "EE:B4:7A:A3:41:6B:B6:69:97:64:76:BD:60:8D:BB:2D:7D:88:C4:C8:B5:47:38:1D:BA:25:6E:94:5C:D6:E2:D5"
+      ]
+    }
+  }
+]

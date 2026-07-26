@@ -1,0 +1,15 @@
+# RailHygiene
+
+> RailHygiene is an independent Android app and website for community-sourced cleanliness ratings of Indian Railways train coaches. It is not affiliated with Indian Railways or IRCTC.
+
+## Main pages
+
+- [RailHygiene](https://railhygiene.in/): Check how the service works and download the Android app.
+- [RailMadad vs RailHygiene](https://railhygiene.in/railmadad-vs-railhygiene.html): Use RailMadad or 139 for immediate official assistance; use RailHygiene to check and share community cleanliness ratings.
+- [Live data dashboard](https://railhygiene.in/dashboard.html): View aggregated coach-cleanliness data.
+- [Privacy policy](https://railhygiene.in/privacy.html): Learn how anonymous identifiers, PNR verification, and feedback data are handled.
+- [Terms of use](https://railhygiene.in/terms.html): Service terms and independence disclaimer.
+
+## App
+
+- [Download RailHygiene on Google Play](https://play.google.com/store/apps/details?id=com.nish.railhygiene)
