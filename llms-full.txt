@@ -1,0 +1,42 @@
+# RailHygiene: complete service summary
+
+RailHygiene is an independent Android app and website for community-sourced historical cleanliness ratings of Indian Railways train coaches. It is developed by Bareslate Studio and is not affiliated with Indian Railways, IRCTC, or RailMadad.
+
+## What RailHygiene does
+
+- Lets visitors search maintained Indian train services by train number, train name, source, or destination.
+- Publishes public train pages when community cleanliness reports exist.
+- Separates overall coach, floor, toilet, and dustbin ratings.
+- Shows exact report count, latest recorded journey date, and coach-level summaries when data supports them.
+- Lets Android users connect feedback to a journey and submit anonymous structured cleanliness observations.
+
+## What RailHygiene does not do
+
+- It does not dispatch cleaning staff or resolve railway complaints.
+- It does not provide official ticketing, schedules, PNR status, or railway certification.
+- It does not guarantee the condition of a future journey.
+- A missing report is not evidence that a train is clean or dirty.
+
+## Immediate railway assistance
+
+For a current train or station complaint, passengers should use the official RailMadad portal or railway helpline 139. RailHygiene may be used after the journey to preserve a historical community observation.
+
+## How to interpret ratings
+
+One report is an early signal, not a consensus. Two to four reports remain a small sample. Five or more reports provide a more useful historical pattern but still cannot guarantee current conditions. Readers should consider report count, recency, coach coverage, and category differences together.
+
+## Data and indexing
+
+The train directory and aggregated rating snapshot are refreshed by an automated website build. Train pages without feedback are marked noindex and excluded from the train sitemap. Pages with community reports are server-rendered as static HTML and included in the XML sitemap.
+
+## Canonical resources
+
+- Homepage: https://railhygiene.in/
+- Train search: https://railhygiene.in/trains/
+- Coach cleanliness guide: https://railhygiene.in/indian-railways-coach-cleanliness.html
+- Complaint guide: https://railhygiene.in/how-to-report-train-cleanliness.html
+- RailMadad comparison: https://railhygiene.in/railmadad-vs-railhygiene.html
+- PNR guide: https://railhygiene.in/pnr-train-cleanliness.html
+- Methodology: https://railhygiene.in/methodology.html
+- Dashboard: https://railhygiene.in/dashboard.html
+- Google Play: https://play.google.com/store/apps/details?id=com.nish.railhygiene

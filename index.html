@@ -8,6 +8,7 @@
 
   <link rel="canonical" href="https://railhygiene.in/">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_IN">
   <meta property="og:site_name" content="RailHygiene">
   <meta property="og:title" content="Indian Railways Coach Cleanliness Ratings | RailHygiene">
   <meta property="og:description" content="Check community cleanliness ratings for Indian Railways coaches before you board, then anonymously share your journey experience.">
@@ -686,37 +687,48 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebSite",
-        "@id": "https://railhygiene.in/#website",
-        "url": "https://railhygiene.in/",
-        "name": "RailHygiene",
-        "description": "Community-sourced cleanliness ratings for Indian Railways train coaches.",
-        "inLanguage": "en-IN"
+    "@type": "WebSite",
+    "@id": "https://railhygiene.in/#website",
+    "url": "https://railhygiene.in/",
+    "name": "RailHygiene",
+    "description": "Community-sourced cleanliness ratings for Indian Railways train coaches.",
+    "inLanguage": "en-IN",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://railhygiene.in/trains/?q={search_term_string}"
       },
-      {
-        "@type": "MobileApplication",
-        "@id": "https://railhygiene.in/#android-app",
-        "name": "RailHygiene: Train Cleanliness",
-        "description": "Check community cleanliness ratings for Indian Railways coaches and anonymously share feedback after your journey.",
-        "url": "https://railhygiene.in/",
-        "downloadUrl": "https://play.google.com/store/apps/details?id=com.nish.railhygiene",
-        "installUrl": "https://play.google.com/store/apps/details?id=com.nish.railhygiene",
-        "operatingSystem": "Android",
-        "applicationCategory": "TravelApplication",
-        "image": "https://railhygiene.in/assets/android-chrome-512x512.png",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "INR"
-        },
-        "publisher": {
-          "@type": "Organization",
-          "name": "Bareslate Studio"
-        }
-      }
-    ]
+      "query-input": "required name=search_term_string"
+    },
+    "publisher": {"@id": "https://railhygiene.in/#organization"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://railhygiene.in/#organization",
+    "name": "Bareslate Studio",
+    "url": "https://railhygiene.in/",
+    "logo": "https://railhygiene.in/assets/android-chrome-512x512.png"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    "@id": "https://railhygiene.in/#android-app",
+    "name": "RailHygiene: Train Cleanliness",
+    "description": "Check community cleanliness ratings for Indian Railways coaches and anonymously share feedback after your journey.",
+    "url": "https://railhygiene.in/",
+    "downloadUrl": "https://play.google.com/store/apps/details?id=com.nish.railhygiene",
+    "installUrl": "https://play.google.com/store/apps/details?id=com.nish.railhygiene",
+    "operatingSystem": "Android",
+    "applicationCategory": "TravelApplication",
+    "image": "https://railhygiene.in/assets/android-chrome-512x512.png",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "INR"},
+    "publisher": {"@id": "https://railhygiene.in/#organization"}
   }
   </script>
 </head>
@@ -728,7 +740,7 @@
       <div class="nav-links">
         <a href="/">Home</a>
         <a href="./trains/">Find a Train</a>
-        <a href="./railmadad-vs-railhygiene.html">RailHygiene vs RailMadad</a>
+        <a href="./how-to-report-train-cleanliness.html">Get Cleaning Help</a>
       </div>
     </div>
   </header>
@@ -893,10 +905,13 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-links">
+      <a href="./indian-railways-coach-cleanliness.html">Coach Cleanliness Guide</a>
+      <a href="./railmadad-vs-railhygiene.html">RailMadad vs RailHygiene</a>
+      <a href="./methodology.html">Methodology</a>
       <a href="./privacy.html">Privacy Policy</a>
       <a href="./terms.html">Terms of Use</a>
     </div>
-    <p class="footer-copy">© 2025 RailHygiene. Not officially affiliated with Indian Railways.</p>
+    <p class="footer-copy">© 2026 RailHygiene. Independent and not affiliated with Indian Railways or IRCTC.</p>
   </footer>
 
   <script>

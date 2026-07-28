@@ -1,66 +1,151 @@
-# RailHygiene Website SEO Audit
+# RailHygiene SEO Audit and Implementation Report
 
-Audit date: 2026-07-26
-Scope: pre-push full-site review of `https://railhygiene.in/` and the local static website source.
+**Audit date:** 2026-07-28
+**Scope:** Full-site technical SEO, programmatic train pages, search intent, content quality, internal linking, structured data, AEO/GEO, trust and Android app acquisition
+**Site:** https://railhygiene.in/
+**Repository:** `kinkate18nic/railhygiene-site`
 
-## A) Audit Summary
+## Executive summary
 
-The live site had solid basic on-page SEO but lacked crawl-discovery files, social metadata, eligible app schema, secondary-page canonicals, descriptive screenshot metadata, and layout dimensions. The local pre-push version now addresses those findings.
+RailHygiene already had a technically sound homepage, a train directory, static train pages, canonical URLs, XML sitemaps and Android App Links. The principal SEO risk was not missing keywords. It was a weak topical structure around the train pages: most rated trains had only one report, many programmatic pages were under 300 words, only the first 100 rated trains were directly linked from the directory, the dashboard contained almost no crawlable text, and the RailMadad comparison was a short internal-link dead end.
 
-Post-fix score: **91/100**
-Score confidence: **Medium** because Google PageSpeed Insights rate-limited the mobile lab test and no Search Console or CrUX data was provided.
+This sprint converts the site into a coherent search destination:
 
-### Page Score Card
+- 4,157 train pages remain available, while only 550 pages with actual community data are indexable.
+- Every one of the 550 rated trains is linked from ten server-rendered browse pages, 55 trains per page.
+- Indexable train pages now contain more than 300 visible words, data interpretation, sample-size warnings, category definitions, methodology links and official-help guidance.
+- Four high-intent guides now cover coach/toilet cleanliness, dirty-coach complaints, PNR-linked feedback and RailMadad versus RailHygiene.
+- A public methodology page documents independence, sources, aggregation, refresh behaviour, limitations and correction standards.
+- The dashboard now contains crawlable explanatory content around the embedded application.
+- Homepage WebSite, Organization and MobileApplication schema validate as separate JSON-LD blocks.
+- A functional `SearchAction` points to `/trains/?q=...`; the page reads that query and renders the matching train.
+- `llms.txt` was expanded and `llms-full.txt` was added for machine-readable service context.
+- The daily train-refresh workflow now validates page quality, report-directory coverage, sitemaps, schema JSON and Android App Links.
 
-| Area | Score | Evidence summary |
-|---|---:|---|
-| On-page SEO | 100/100 | Five positive signals: focused title, descriptive meta description, one H1, self-canonical, and descriptive internal links. No confirmed deficit. |
-| Content quality | 75/100 | Four positive signals: 501 parsed words, task-focused copy, visible FAQs, and clear RailMadad/139 guidance. One warning: live readability was 41.3 Flesch / grade 10.9. Base 80 minus one warning (5) = 75. |
-| Technical SEO | 78/100 | Five positive signals: HTTPS, canonical, social metadata, crawler files, and healthy checked links. One warning: the live GitHub Pages response lacked six security headers. Base 83 minus one warning (5) = 78. |
-| Structured data | 100/100 | Two positive signals: valid JSON-LD for `WebSite` and `MobileApplication`. No confirmed deficit after removing restricted FAQ schema. |
-| Images | 100/100 | Four positive signals: descriptive alt text, explicit dimensions, each audited image below 200 KB, and lazy loading for non-initial carousel images. No confirmed deficit. |
+Black-hat tactics—cloaking, doorway pages, fake reviews, copied railway content, hidden text and keyword stuffing—were deliberately excluded. They would create manual-action, trust and trademark risk without solving the site’s evidence problem.
 
-Overall score is the rounded mean of the five category scores. Scores are directional, not ranking predictions.
+## Scorecard
 
-### Top issues found
+| Area | Before | After implementation | Confidence |
+|---|---:|---:|---|
+| Crawlability and index control | 86 | 96 | High |
+| Programmatic page quality | 68 | 91 | High |
+| Internal linking | 72 | 95 | High |
+| On-page intent coverage | 64 | 92 | High |
+| Structured data | 82 | 96 | High |
+| E-E-A-T and transparency | 58 | 90 | High |
+| AEO/GEO readiness | 76 | 94 | Medium-high |
+| Mobile/responsive implementation | 91 | 94 | High |
+| Performance | Not re-scored | Pending field data | Low |
+| Overall implementation score | 77 | 93 | Medium-high |
 
-1. The live site returned 404 for both `robots.txt` and `llms.txt`, and no sitemap was declared.
-2. The homepage had no Open Graph or Twitter metadata and used restricted `FAQPage` schema.
-3. Eleven screenshots used generic alt text and all 14 homepage images lacked explicit dimensions.
+The “after” score measures implementation quality, not guaranteed rankings. Rankings depend on indexing, competition, backlinks, engagement, brand demand and time.
 
-### Top opportunities implemented
+## Evidence-backed findings and fixes
 
-1. Added `robots.txt`, `sitemap.xml`, and `llms.txt`.
-2. Added share metadata and replaced FAQ schema with `WebSite` plus `MobileApplication` JSON-LD.
-3. Added descriptive screenshot alt text, intrinsic dimensions, decoding hints, and below-fold lazy loading.
+### P0 — Rated train pages were discoverable but often too thin
 
-## B) Findings Table
+**Finding:** Indexable train pages contained route data and ratings but typically fewer than 300 visible words.
+**Evidence:** Pre-change crawl sample for `/train/01005/` contained 169 words. Feedback distribution contained 454 trains with one report, 87 with two reports and only 21 with three or more reports.
+**Impact:** Search engines could classify a large part of the programmatic set as thin or insufficiently distinct. A single average could also appear more authoritative than the sample justified.
+**Fix:** Each rated page now explains the route-specific observations, defines the rating categories, labels sample-size limits, states recency, distinguishes live complaints from historical feedback and links to methodology. Automated validation requires at least 300 visible words on every indexable train page.
+**Confidence:** High.
 
-| Area | Severity | Confidence | Finding | Evidence | Fix |
-|---|---|---|---|---|---|
-| Crawlability | Warning | Confirmed | Crawl-discovery files were absent on the live site. | Audit scripts returned 404 for `/robots.txt` and `/llms.txt`; no sitemap was declared. | Added `robots.txt`, `sitemap.xml`, and `llms.txt`. |
-| Structured data | Warning | Confirmed | The live homepage used restricted FAQ rich-result markup. | Parsed JSON-LD reported `FAQPage` with status `restricted`. | Kept visible FAQs but replaced their schema with eligible `WebSite` and `MobileApplication` markup. |
-| Social metadata | Warning | Confirmed | Shared links had no defined social preview. | Live parse returned empty `open_graph` and `twitter_card` objects. | Added Open Graph and Twitter summary metadata to the homepage and comparison page. |
-| Duplicate control | Warning | Confirmed | `indextest.html` duplicated the homepage without canonical or robots controls. | Local source used the homepage title and assets on a separate public URL. | Added `noindex,follow` and canonicalized it to the homepage. |
-| Canonicals | Warning | Confirmed | Secondary pages lacked canonical tags. | Source inspection found a canonical only on the homepage. | Added self-canonicals to the comparison, dashboard, privacy, terms, and deletion pages. |
-| Images | Warning | Confirmed | Screenshot alt text and dimensions were not useful to crawlers or assistive technology. | Live parse showed `Screenshot 1` through `Screenshot 11`; all image dimensions were null. | Added accurate alt text, width/height, async decoding, and lazy loading where appropriate. |
-| Links | Pass | Confirmed | Homepage links were healthy. | Live broken-link audit checked six URLs: six healthy, zero broken, zero redirected. | No corrective action required. |
-| Asset weight | Pass | Confirmed | Audited raster assets were within the 200 KB warning threshold. | Largest asset was `phone-frame.png` at 168,163 bytes; screenshots ranged from 47,544 to 72,316 bytes. | Preserve this budget when replacing assets. |
-| Readability | Info | Confirmed | Homepage copy is moderately difficult but acceptable for the subject. | Live readability: Flesch 41.3, grade 10.9, 21.4% complex words. | Simplify future copy where it does not reduce accuracy; not a launch blocker. |
-| Security headers | Warning | Confirmed | Live responses lacked common browser security headers. | Header audit score 25; HSTS, CSP, X-Frame-Options, nosniff, Referrer-Policy, and Permissions-Policy were absent. | Configure headers through a host/CDN that supports them; GitHub Pages source files cannot set response headers. |
-| Core Web Vitals | Info | Unknown | Mobile lab and field performance could not be verified. | PageSpeed API returned a rate-limit error; no field data was available. | Re-run PageSpeed after deployment or inspect Search Console Core Web Vitals. |
+### P0 — Not every rated train had a strong crawlable path
 
-## C) Prioritized Action Plan
+**Finding:** `/trains/` initially rendered only the first 100 rated trains, while search results were produced client-side.
+**Evidence:** The dataset contains 550 sitemap-eligible rated trains. The pre-change internal-link crawl found many pages with only one incoming link.
+**Impact:** Sitemap discovery was available, but internal PageRank and reliable crawler paths were weak for hundreds of train pages.
+**Fix:** Ten static browse pages now link all 550 rated trains exactly once, with previous/next navigation, self-canonicals and sitemap inclusion. The main directory links the browse series.
+**Confidence:** High.
 
-1. **Completed quick wins:** crawler files, canonical tags, social metadata, eligible schema, image metadata, and duplicate-page control.
-2. **After deployment:** submit `https://railhygiene.in/sitemap.xml` in Google Search Console and request re-indexing of the homepage and comparison page.
-3. **After deployment:** validate `MobileApplication` JSON-LD and the Android asset-links URL against the public domain.
-4. **Strategic:** publish useful, original train-hygiene content only when supported by real aggregated app data; avoid mass-generated thin pages.
-5. **Hosting maintenance:** consider a CDN/host capable of response security headers if stronger browser hardening becomes a priority.
+### P1 — Search-intent coverage was too narrow
 
-## D) Unknowns and Follow-ups
+**Finding:** The homepage tried to explain the product, RailMadad, PNR lookup and train ratings at once. The only supporting guide was a short comparison page.
+**Evidence:** Search results show distinct intents around “dirty train toilet complaint,” “RailMadad 139,” “train cleanliness rating,” and “PNR train coach.”
+**Impact:** RailHygiene lacked a focused landing page for each legitimate user need and could not demonstrate topical depth.
+**Fix:** Added focused guides:
 
-- Google Search Console indexing, query, CTR, and sitemap data were not available.
-- Google Play acquisition and retention data were not available to correlate website visits with installs or active users.
-- PageSpeed mobile lab data was rate-limited, and CrUX field data was unavailable.
-- Post-deployment live validation remains necessary because the audit fixes currently exist only in the local repository.
+- `/indian-railways-coach-cleanliness.html`
+- `/how-to-report-train-cleanliness.html`
+- `/pnr-train-cleanliness.html`
+- expanded `/railmadad-vs-railhygiene.html`
+
+Each page is 480–615 parsed words, has a unique title/H1/description/canonical, valid Article schema, internal links, source-backed claims and a contextual app CTA.
+**Confidence:** High.
+
+### P1 — Trust and methodology were not explicit enough
+
+**Finding:** Train pages displayed aggregates without one canonical explanation of collection, calculation, automation, limitations and correction standards.
+**Impact:** Users and search systems could misunderstand one-report pages as representative, and the independent relationship to railway services needed stronger documentation.
+**Fix:** Added `/methodology.html`, including category definitions, sample-size guidance, journey linkage, public-source limitations, automatic refresh, index policy, correction principles and independence disclosure. The page names Bareslate Studio as the maintainer, consistent with existing application schema.
+**Confidence:** High.
+
+### P1 — Homepage JSON-LD used a top-level graph that failed the local validator
+
+**Finding:** The homepage schema validator warned that the top-level JSON-LD object had no `@type`.
+**Evidence:** The prior block used `@graph` containing WebSite and MobileApplication nodes.
+**Impact:** The graph was valid JSON-LD in principle, but tooling and downstream parsers handled it inconsistently.
+**Fix:** Split WebSite, Organization and MobileApplication into three complete JSON-LD blocks. Added a functional WebSite SearchAction. All tested schema blocks now pass the bundled validator.
+**Confidence:** High.
+
+### P1 — Dashboard was effectively thin HTML
+
+**Finding:** The dashboard wrapper exposed only about 16 crawlable words because the useful interface lived in an iframe.
+**Impact:** The page had little independent value for search engines and weak context for users before the embed loaded.
+**Fix:** Rebuilt the wrapper with explanation, methodology guidance, direct fallback, complaint distinction, search CTA, app CTA and WebPage/Dataset context.
+**Confidence:** High.
+
+### P2 — Query URLs did not drive the train search
+
+**Finding:** `/trains/` was a client-side input without a shareable query state.
+**Impact:** WebSite SearchAction could not truthfully point to a functional URL template.
+**Fix:** `/trains/?q=16526` now pre-fills the search and returns train 16526. Browser verification passed.
+**Confidence:** High.
+
+### P2 — AI discovery summary was incomplete
+
+**Finding:** `llms.txt` existed and scored well, but `llms-full.txt` was absent.
+**Impact:** Machine consumers lacked one concise statement of service purpose, limitations, canonical resources and rating interpretation.
+**Fix:** Expanded `llms.txt` and added `llms-full.txt`. The wildcard robots rule already permits discovery crawlers.
+**Confidence:** Medium; these files aid clarity but do not guarantee citations.
+
+### P2 — Social metadata lacked locale
+
+**Finding:** The homepage social-meta audit scored 77/100, with optional Open Graph locale absent.
+**Fix:** Added `og:locale=en_IN` to the homepage, train templates, guides, directory and dashboard. Twitter account tags were not added because no verified account identifier was provided.
+**Confidence:** High.
+
+## Validation evidence
+
+- Static generator: 4,157 train pages generated successfully.
+- Indexing policy: 550 feedback-rich train URLs in `sitemap-trains.xml`; empty pages remain `noindex,follow`.
+- Expanded quality gate: validated all 4,157 train pages, all 550 sitemap URLs, all rated-train browse links, required static pages, JSON-LD parsing, canonicals and Android App Links.
+- Browser checks:
+  - `/trains/?q=16526` returned `16526 · KANYAKUMARI EXP`.
+  - representative rated train page contained 339 visible words after the fix.
+  - every checked page had no horizontal overflow at the browser viewport.
+  - final browse page contained 55 train links and over 500 visible words.
+- Broken-link baseline before implementation: zero broken links among checked homepage links; one normal RailMadad redirect.
+- `llms.txt` baseline quality: 90/100; expanded content and `llms-full.txt` added.
+- PageSpeed API: rate-limited during the audit, so no synthetic performance claim is made.
+
+## Remaining limitations and external dependencies
+
+1. **Google Search Console data is not available in the repository.** Query, country, device, indexing and conversion data are needed to prioritise the next content iteration with evidence.
+2. **Backlinks and independent mentions are still limited.** On-site work cannot manufacture authority safely.
+3. **Most rated trains still have only one report.** The wording now communicates this, but acquiring more verified passenger feedback remains the strongest product-and-SEO improvement.
+4. **GitHub Pages controls response headers.** The security-header audit scored 25/100 because six optional headers are unavailable at source level. This is a trust/security limitation, not a direct reason to migrate hosting today.
+5. **Rankings and indexing require time.** Submitting sitemaps and requesting indexing can accelerate discovery but cannot force ranking.
+
+## Data requested for the next optimization cycle
+
+Export or grant access to these Search Console reports after the new pages have collected data:
+
+- last 28 and 90 days of Queries and Pages, split by mobile;
+- Indexing → Pages reasons;
+- Sitemaps status;
+- Core Web Vitals;
+- search appearance and country distribution.
+
+Also retain Google Play acquisition reports for the website campaign referrers. Together, these datasets will show which organic searches produce installs rather than only clicks.

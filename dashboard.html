@@ -1,96 +1,26 @@
-<!-- dashboard.html -->
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RailHygiene - Live Data Dashboard</title>
-  <meta name="description" content="View the RailHygiene Live Data Dashboard. Access crowdsourced data and stats on Indian Railways coach cleanliness and user feedback.">
-  <link rel="canonical" href="https://railhygiene.in/dashboard.html">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden; /* Prevents double scrollbars */
-      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: oklch(98% 0.01 240); /* Matches the React dashboard background */
-      color: oklch(25% 0.02 240);
-    }
-    .dashboard-container {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-    .dashboard-header {
-      padding: 16px 48px;
-      background-color: transparent;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 10;
-    }
-    .dashboard-header h1 {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: oklch(50% 0.02 240); /* Matches text-secondary */
-      letter-spacing: -0.01em;
-    }
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .back-btn {
-      text-decoration: none;
-      color: oklch(60% 0.15 250); /* Accent color */
-      font-weight: 600;
-      font-size: 0.95rem;
-      padding: 8px 16px;
-      border-radius: 8px;
-      transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .back-btn:hover {
-      background-color: oklch(92% 0.01 240); /* Border color */
-    }
-    .warning-text {
-      color: oklch(45% 0.15 35); /* Alert text color */
-      font-weight: 600;
-      font-size: 0.9rem;
-      background-color: oklch(96% 0.05 40); /* Alert bg */
-      padding: 4px 12px;
-      border-radius: 20px;
-    }
-    .iframe-wrapper {
-      flex-grow: 1; /* Allows the iframe to take all available space */
-    }
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="dashboard-container">
-    <header class="dashboard-header">
-      <h1>
-        RailHygiene Dashboard Hub
-        <span class="warning-text">Automatic Data Refresh Once a Day</span>
-      </h1>
-      <div class="header-actions">
-        <a href="/" class="back-btn">← Back to Home</a>
-      </div>
-    </header>
-    <div class="iframe-wrapper">
-      <iframe 
-        src="https://railhygienemvp.web.app/" 
-        title="RailHygiene Live Data Dashboard">
-      </iframe>
-    </div>
-  </div>
-</body>
-</html>
+<!doctype html>
+<html lang="en-IN"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Indian Train Coach Cleanliness Data Dashboard | RailHygiene</title>
+  <meta name="description" content="Explore RailHygiene's community Indian train coach cleanliness dashboard, including recent reports and aggregated coach, toilet, floor and dustbin ratings.">
+  <link rel="canonical" href="https://railhygiene.in/dashboard.html"><meta name="robots" content="index,follow">
+  <meta property="og:type" content="website"><meta property="og:locale" content="en_IN"><meta property="og:site_name" content="RailHygiene"><meta property="og:title" content="Indian Train Coach Cleanliness Data Dashboard"><meta property="og:description" content="Explore aggregated community cleanliness observations across Indian train coaches."><meta property="og:url" content="https://railhygiene.in/dashboard.html"><meta property="og:image" content="https://railhygiene.in/assets/android-chrome-512x512.png"><meta name="twitter:card" content="summary">
+  <link rel="icon" href="/assets/favicon.ico"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/assets/guide.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Indian train coach cleanliness data dashboard","url":"https://railhygiene.in/dashboard.html","description":"Interactive dashboard of aggregated RailHygiene community cleanliness observations.","isPartOf":{"@id":"https://railhygiene.in/#website"},"about":{"@type":"Dataset","name":"RailHygiene community train coach cleanliness aggregates","creator":{"@type":"Organization","name":"Bareslate Studio"}}}</script>
+  <style>.dashboard-frame{width:100%;min-height:780px;border:1px solid var(--line);border-radius:20px;background:#fff}.frame-note{color:var(--muted);font-size:.95rem}</style>
+</head><body>
+<a class="skip" href="#content">Skip to content</a><header class="site-header"><nav class="nav"><a class="brand" href="/"><img src="/assets/logo.png" alt="" width="40" height="40">RailHygiene</a><div class="nav-links"><a href="/trains/">Find a train</a><a href="/methodology.html">Methodology</a><a href="/how-to-report-train-cleanliness.html">Get cleaning help</a></div></nav></header>
+<main id="content" class="wrap article">
+  <header class="hero"><p class="eyebrow">Community data</p><h1>Indian train coach cleanliness dashboard</h1><p class="lede">Explore aggregated passenger observations for coach, floor, toilet and dustbin cleanliness. The dashboard refreshes from the current RailHygiene data snapshot.</p></header>
+  <div class="quick"><strong>Read this before comparing trains</strong>The dashboard is a historical community view, not a live railway inspection. A train with more reports has a more informative average than a train with one report.</div>
+  <h2>What the dashboard shows</h2>
+  <p>The interactive view brings together recent feedback activity and aggregated cleanliness scores. It is designed for broad patterns and discovery. For a specific journey, use the <a href="/trains/">train search</a> to open a dedicated page with its route, exact report count, latest recorded date, category averages and coach-level details where available.</p>
+  <p>Differences between trains can reflect sample size, coach coverage, journey date and cleaning cycle—not only underlying service quality. A high or low average should never be treated as a guarantee. Review the <a href="/methodology.html">ratings methodology</a> before publishing comparisons or drawing conclusions from a small sample.</p>
+  <h2>Interactive data view</h2>
+  <p class="frame-note">If the embedded dashboard does not load, <a href="https://railhygienemvp.web.app/" rel="noopener">open it directly</a>.</p>
+  <iframe class="dashboard-frame" src="https://railhygienemvp.web.app/" title="RailHygiene interactive train coach cleanliness dashboard" loading="lazy"></iframe>
+  <h2>Need action during a journey?</h2>
+  <p>The dashboard cannot request cleaning or contact railway staff. For an active coach or toilet cleanliness issue, use the official RailMadad service or call railway helpline 139. See the <a href="/how-to-report-train-cleanliness.html">step-by-step passenger guide</a>.</p>
+  <section class="cta"><h2>Look up a specific train</h2><p>Find public cleanliness reports by train number, name, source or destination.</p><div class="buttons"><a class="button" href="/trains/">Search trains</a><a class="button outline" href="https://play.google.com/store/apps/details?id=com.nish.railhygiene&amp;referrer=utm_source%3Drailhygiene_website%26utm_medium%3Ddashboard%26utm_campaign%3Ddata">Contribute in the app</a></div></section>
+</main><footer class="site-footer"><a href="/">Home</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><p>Independent community data; not affiliated with Indian Railways or IRCTC.</p></footer>
+</body></html>

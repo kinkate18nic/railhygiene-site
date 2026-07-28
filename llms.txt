@@ -5,7 +5,12 @@
 ## Main pages
 
 - [RailHygiene](https://railhygiene.in/): Check how the service works and download the Android app.
+- [Search train cleanliness ratings](https://railhygiene.in/trains/): Search maintained Indian train services by number, name, source, or destination.
+- [Indian Railways coach cleanliness guide](https://railhygiene.in/indian-railways-coach-cleanliness.html): Understand coach, floor, toilet, and dustbin scores and their limits.
+- [How to report a dirty train coach](https://railhygiene.in/how-to-report-train-cleanliness.html): Use official RailMadad or 139 for immediate help; use RailHygiene for historical feedback.
 - [RailMadad vs RailHygiene](https://railhygiene.in/railmadad-vs-railhygiene.html): Use RailMadad or 139 for immediate official assistance; use RailHygiene to check and share community cleanliness ratings.
+- [PNR and train cleanliness](https://railhygiene.in/pnr-train-cleanliness.html): Why the app uses journey details and how public aggregates protect PNR privacy.
+- [Ratings methodology](https://railhygiene.in/methodology.html): Data sources, aggregation, automatic refresh, sample-size guidance, limitations, and editorial standards.
 - [Live data dashboard](https://railhygiene.in/dashboard.html): View aggregated coach-cleanliness data.
 - [Privacy policy](https://railhygiene.in/privacy.html): Learn how anonymous identifiers, PNR verification, and feedback data are handled.
 - [Terms of use](https://railhygiene.in/terms.html): Service terms and independence disclaimer.
@@ -13,3 +18,7 @@
 ## App
 
 - [Download RailHygiene on Google Play](https://play.google.com/store/apps/details?id=com.nish.railhygiene)
+
+## Important distinction
+
+RailHygiene cannot resolve a live railway complaint. Passengers who need help during a journey should use the official RailMadad portal or railway helpline 139.

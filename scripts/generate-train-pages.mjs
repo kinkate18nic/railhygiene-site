@@ -8,6 +8,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DATA_DIR = path.join(ROOT, "data");
 const TRAIN_ROOT = path.join(ROOT, "train");
 const TRAINS_DIRECTORY = path.join(ROOT, "trains");
+const REPORTS_DIRECTORY = path.join(TRAINS_DIRECTORY, "reports");
 const TRAIN_CACHE = path.join(DATA_DIR, "train-directory.json");
 const SUMMARY_CACHE = path.join(DATA_DIR, "dashboard-summary.json");
 
@@ -24,7 +25,11 @@ const offline = process.argv.includes("--offline");
 
 const STATIC_SITEMAP_URLS = [
   ["", "index.html"],
+  ["indian-railways-coach-cleanliness.html", "indian-railways-coach-cleanliness.html"],
+  ["how-to-report-train-cleanliness.html", "how-to-report-train-cleanliness.html"],
+  ["pnr-train-cleanliness.html", "pnr-train-cleanliness.html"],
   ["railmadad-vs-railhygiene.html", "railmadad-vs-railhygiene.html"],
+  ["methodology.html", "methodology.html"],
   ["dashboard.html", "dashboard.html"],
   ["privacy.html", "privacy.html"],
   ["terms.html", "terms.html"],
@@ -42,6 +47,10 @@ function escapeHtml(value) {
 
 function safeJson(value) {
   return JSON.stringify(value).replaceAll("<", "\\u003c");
+}
+
+function cleanGeneratedHtml(value) {
+  return value.replace(/[ \t]+$/gm, "");
 }
 
 function clampRating(value) {
@@ -235,6 +244,34 @@ function ratingMeter(label, value) {
     </div>`;
 }
 
+function ratingLabel(value) {
+  const rating = clampRating(value);
+  if (rating >= 4) return "rated highly";
+  if (rating >= 3) return "rated mixed to good";
+  if (rating > 0) return "rated below average";
+  return "not yet rated";
+}
+
+function renderInterpretation(train, stats, feedbackCount, lastReport) {
+  if (!feedbackCount) return "";
+  const sampleNote =
+    feedbackCount === 1
+      ? "This result comes from one passenger report, so treat it as an early signal rather than a reliable prediction."
+      : feedbackCount < 5
+        ? `This is still a small sample of ${feedbackCount} reports. Conditions can differ by coach, date and cleaning cycle.`
+        : `This summary combines ${feedbackCount} passenger reports, but conditions can still vary by coach, date and cleaning cycle.`;
+  return `
+    <section class="panel" aria-labelledby="interpretation-heading">
+      <p class="eyebrow">What the data means</p>
+      <h2 id="interpretation-heading">How to read these ${escapeHtml(train.number)} ratings</h2>
+      <p>Passengers have ${ratingLabel(stats.avgGeneralRating)} the overall coach condition, while the floor is ${ratingLabel(stats.avgFloorRating)} and the toilets are ${ratingLabel(stats.avgToiletRating)}. These are historical community observations for ${escapeHtml(train.name)} between ${escapeHtml(train.src)} and ${escapeHtml(train.dest)}; they are not a live inspection or a guarantee of today’s condition.</p>
+      <p><strong>Sample-size note:</strong> ${sampleNote} The latest journey represented in this snapshot is dated <time datetime="${lastReport}">${escapeHtml(lastReport)}</time>.</p>
+      <p>Use this page to understand past passenger experience. If you are currently travelling and need cleaning or official assistance, use <a href="/how-to-report-train-cleanliness.html">RailMadad or railway helpline 139</a>. After the journey, adding an anonymous rating in RailHygiene makes this estimate more useful for the next passenger.</p>
+      <p>The four category scores answer different questions: overall coach covers the general condition, floor focuses on the coach floor, toilets cover the reported washroom areas, and dustbins reflect availability and usability where passengers supplied that detail. Compare categories instead of treating one average as the complete story.</p>
+      <p><a href="/methodology.html">Read how RailHygiene collects, aggregates and limits its cleanliness data.</a></p>
+    </section>`;
+}
+
 function renderCoachTable(stats) {
   const coaches = coachEntries(stats);
   if (!coaches.length) return "";
@@ -404,6 +441,7 @@ function renderTrainPage(train, stats, related, summaryLastUpdated) {
   <meta name="robots" content="${robots}">
   <link rel="canonical" href="${canonical}">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_IN">
   <meta property="og:site_name" content="RailHygiene">
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(description)}">
@@ -444,11 +482,12 @@ function renderTrainPage(train, stats, related, summaryLastUpdated) {
     </section>
     <div class="grid">
       ${dataPanel}
+      ${renderInterpretation(train, stats, feedbackCount, lastReport)}
       ${renderRelatedTrains(related)}
-      <aside class="disclaimer"><strong>Need cleaning help now?</strong> Use the official RailMadad service or call railway helpline 139. RailHygiene records anonymous historical feedback for future passengers and does not resolve complaints.</aside>
+      <aside class="disclaimer"><strong>Need cleaning help now?</strong> Use the official <a href="https://railmadad.indianrailways.gov.in/" rel="nofollow noopener">RailMadad service</a> or call railway helpline 139. RailHygiene records anonymous historical feedback for future passengers and does not resolve complaints.</aside>
     </div>
   </main>
-  <footer class="site-footer">© RailHygiene · <a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></footer>
+  <footer class="site-footer">© RailHygiene · <a href="/methodology.html">Methodology</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></footer>
 </body>
 </html>`;
 }
@@ -468,6 +507,16 @@ function renderDirectoryPage(trains, feedbackTrainNumbers, lastUpdated) {
         </li>`,
     )
     .join("");
+  const directorySchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${SITE_URL}/trains/#webpage`,
+    url: `${SITE_URL}/trains/`,
+    name: "Search Indian Train Cleanliness Ratings",
+    description:
+      "Search Indian Railways services and browse community-reported coach, floor, toilet and dustbin cleanliness information.",
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+  };
 
   return `<!doctype html>
 <html lang="en">
@@ -478,10 +527,19 @@ function renderDirectoryPage(trains, feedbackTrainNumbers, lastUpdated) {
   <meta name="description" content="Search Indian Railways trains by number or name and view community-reported coach, floor, toilet and dustbin cleanliness information on RailHygiene.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="${SITE_URL}/trains/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:site_name" content="RailHygiene">
+  <meta property="og:title" content="Search Indian Train Cleanliness Ratings">
+  <meta property="og:description" content="Find community cleanliness ratings for Indian Railways trains and coaches.">
+  <meta property="og:url" content="${SITE_URL}/trains/">
+  <meta property="og:image" content="${SITE_URL}/assets/android-chrome-512x512.png">
+  <meta name="twitter:card" content="summary">
   <link rel="icon" href="/assets/favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="application/ld+json">${safeJson(directorySchema)}</script>
   <style>
     :root{font-family:"Outfit",system-ui,sans-serif;color:#102a43;background:#f6f9fc;--blue:#0067a8;--line:#d8e2ec;--muted:#52677b}*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:1px solid var(--line)}nav,main{width:min(980px,calc(100% - 32px));margin:auto}.top{min-height:72px;display:flex;align-items:center;justify-content:space-between}.brand{min-height:44px;display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;font-size:1.2rem;font-weight:700}.brand img{width:40px;height:40px;border-radius:10px}.back{min-width:44px;min-height:44px;padding:0 4px;display:inline-flex;align-items:center;justify-content:center;color:var(--blue);font-weight:600;text-decoration:none}.hero{padding:64px 0 30px}.hero h1{margin:0;font-size:clamp(2.2rem,7vw,4rem);line-height:1}.hero p{max-width:680px;color:var(--muted);font-size:1.08rem;line-height:1.65}.search{position:relative;margin:24px 0}.search label{display:block;margin-bottom:8px;font-weight:600}.search input{width:100%;min-height:60px;padding:0 20px;border:2px solid #9db2c5;border-radius:16px;background:#fff;font:inherit;font-size:1.08rem}.search input:focus{outline:3px solid #bde3ff;border-color:var(--blue)}.status{min-height:24px;color:var(--muted)}ul{list-style:none;margin:20px 0 60px;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}li a{display:block;min-height:44px;padding:18px;border:1px solid var(--line);border-radius:16px;background:#fff;color:inherit;text-decoration:none}li a:hover{border-color:#67add7;box-shadow:0 8px 20px rgba(16,42,67,.07)}a:focus-visible{outline:3px solid #93c5fd;outline-offset:3px}li strong,li span{display:block}li span{margin-top:6px;color:var(--muted);font-size:.92rem}.empty{grid-column:1/-1;padding:30px;text-align:center;color:var(--muted)}footer{padding:28px;text-align:center;background:#fff;border-top:1px solid var(--line);color:var(--muted)}@media(max-width:650px){ul{grid-template-columns:1fr}.hero{padding-top:44px}}
   </style>
@@ -494,6 +552,7 @@ function renderDirectoryPage(trains, feedbackTrainNumbers, lastUpdated) {
       <p>Search ${trains.length.toLocaleString("en-IN")} maintained Indian Railways services. Trains with community reports include coach, floor, toilet and dustbin cleanliness details.</p>
       <div class="search"><label for="train-search">Train number or name</label><input id="train-search" type="search" inputmode="search" autocomplete="off" placeholder="Try 16526 or train name"></div>
       <p id="status" class="status" aria-live="polite">Showing trains with available community reports.</p>
+      <p><a class="back" href="/trains/reports/1/">Browse every train with a community cleanliness report</a></p>
     </section>
     <ul id="results">${featuredMarkup}</ul>
   </main>
@@ -534,7 +593,14 @@ function renderDirectoryPage(trains, feedbackTrainNumbers, lastUpdated) {
         if (!response.ok) throw new Error("Train directory unavailable");
         return response.json();
       })
-      .then((data) => { trains = data; })
+      .then((data) => {
+        trains = data;
+        const query = new URLSearchParams(location.search).get("q");
+        if (query) {
+          input.value = query;
+          input.dispatchEvent(new Event("input"));
+        }
+      })
       .catch(() => {
         status.textContent = "Live search is temporarily unavailable. Please try again later.";
       });
@@ -556,6 +622,70 @@ function renderDirectoryPage(trains, feedbackTrainNumbers, lastUpdated) {
       render(matches);
     });
   </script>
+</body>
+</html>`;
+}
+
+function renderReportsPage(trains, page, pageCount, lastUpdated) {
+  const canonical = `${SITE_URL}/trains/reports/${page}/`;
+  const items = trains
+    .map(
+      (train) => `<li><a href="/train/${train.number}/"><strong>${escapeHtml(
+        train.number,
+      )} · ${escapeHtml(train.name)}</strong><span>${escapeHtml(
+        train.src,
+      )} → ${escapeHtml(train.dest)}</span></a></li>`,
+    )
+    .join("");
+  const previous =
+    page > 1
+      ? `<a rel="prev" href="/trains/reports/${page - 1}/">← Previous</a>`
+      : "<span></span>";
+  const next =
+    page < pageCount
+      ? `<a rel="next" href="/trains/reports/${page + 1}/">Next →</a>`
+      : "<span></span>";
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    url: canonical,
+    name: `Indian train cleanliness reports – page ${page}`,
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+  };
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Indian Train Cleanliness Reports – Page ${page} | RailHygiene</title>
+  <meta name="description" content="Browse Indian Railways trains with community coach, floor and toilet cleanliness reports on RailHygiene. Results page ${page} of ${pageCount}.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="${canonical}">
+  ${page > 1 ? `<link rel="prev" href="${SITE_URL}/trains/reports/${page - 1}/">` : ""}
+  ${page < pageCount ? `<link rel="next" href="${SITE_URL}/trains/reports/${page + 1}/">` : ""}
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:site_name" content="RailHygiene">
+  <meta property="og:title" content="Indian Train Cleanliness Reports – Page ${page}">
+  <meta property="og:url" content="${canonical}">
+  <meta property="og:image" content="${SITE_URL}/assets/android-chrome-512x512.png">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="application/ld+json">${safeJson(schema)}</script>
+  <style>
+    :root{font-family:"Outfit",system-ui,sans-serif;color:#102a43;background:#f6f9fc;--blue:#0067a8;--line:#d8e2ec;--muted:#52677b}*{box-sizing:border-box}body{margin:0}header,footer{background:#fff;border-bottom:1px solid var(--line)}nav,main{width:min(980px,calc(100% - 32px));margin:auto}.top{min-height:72px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:10px;min-height:44px;color:inherit;text-decoration:none;font-weight:700}.brand img{width:40px;height:40px;border-radius:10px}.top>a:last-child,.pager a{min-height:44px;display:inline-flex;align-items:center;color:var(--blue);font-weight:700}.hero{padding:54px 0 22px}.hero h1{font-size:clamp(2rem,7vw,3.5rem);line-height:1.05;margin:0}.hero p{max-width:720px;color:var(--muted);line-height:1.65}.list{list-style:none;padding:0;margin:18px 0 42px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.list a{display:block;min-height:44px;padding:17px;border:1px solid var(--line);border-radius:15px;background:#fff;color:inherit;text-decoration:none}.list a:hover{border-color:#67add7}.list strong,.list span{display:block}.list span{margin-top:5px;color:var(--muted);font-size:.9rem}.pager{display:flex;justify-content:space-between;align-items:center;margin:0 0 50px}.pager a{padding:0 8px}footer{padding:24px;text-align:center;color:var(--muted);border-top:1px solid var(--line)}@media(max-width:650px){.list{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header><nav class="top"><a class="brand" href="/"><img src="/assets/logo.png" alt="" width="40" height="40">RailHygiene</a><a href="/trains/">Search trains</a></nav></header>
+  <main>
+    <section class="hero"><p>Community data directory</p><h1>Indian train cleanliness reports</h1><p>Every train listed below has at least one historical passenger cleanliness report. Browse page ${page} of ${pageCount}, or use the <a href="/trains/">train search</a> to find a service by number, name, source or destination.</p></section>
+    <ul class="list">${items}</ul>
+    <nav class="pager" aria-label="Report directory pages">${previous}<span>Page ${page} of ${pageCount}</span>${next}</nav>
+  </main>
+  <footer>Community rating snapshot updated <time datetime="${escapeHtml(lastUpdated)}">${escapeHtml(lastUpdated.slice(0, 10))}</time>. <a href="/methodology.html">Methodology</a></footer>
 </body>
 </html>`;
 }
@@ -617,8 +747,10 @@ async function generate() {
   }
 
   await rm(TRAIN_ROOT, { recursive: true, force: true });
+  await rm(REPORTS_DIRECTORY, { recursive: true, force: true });
   await mkdir(TRAIN_ROOT, { recursive: true });
   await mkdir(TRAINS_DIRECTORY, { recursive: true });
+  await mkdir(REPORTS_DIRECTORY, { recursive: true });
 
   for (const train of trains) {
     const relatedCandidates = [
@@ -643,11 +775,13 @@ async function generate() {
     await mkdir(directory, { recursive: true });
     await writeFile(
       path.join(directory, "index.html"),
-      renderTrainPage(
-        train,
-        summary.statsByTrain[train.number],
-        related,
-        summary.lastUpdated,
+      cleanGeneratedHtml(
+        renderTrainPage(
+          train,
+          summary.statsByTrain[train.number],
+          related,
+          summary.lastUpdated,
+        ),
       ),
       "utf8",
     );
@@ -655,9 +789,36 @@ async function generate() {
 
   await writeFile(
     path.join(TRAINS_DIRECTORY, "index.html"),
-    renderDirectoryPage(trains, feedbackTrainNumbers, summary.lastUpdated),
+    cleanGeneratedHtml(
+      renderDirectoryPage(trains, feedbackTrainNumbers, summary.lastUpdated),
+    ),
     "utf8",
   );
+
+  const ratedTrains = trains.filter((train) =>
+    feedbackTrainNumbers.has(train.number),
+  );
+  const reportPageSize = 55;
+  const reportPageCount = Math.ceil(ratedTrains.length / reportPageSize);
+  for (let page = 1; page <= reportPageCount; page += 1) {
+    const directory = path.join(REPORTS_DIRECTORY, String(page));
+    await mkdir(directory, { recursive: true });
+    await writeFile(
+      path.join(directory, "index.html"),
+      cleanGeneratedHtml(
+        renderReportsPage(
+          ratedTrains.slice(
+            (page - 1) * reportPageSize,
+            page * reportPageSize,
+          ),
+          page,
+          reportPageCount,
+          summary.lastUpdated,
+        ),
+      ),
+      "utf8",
+    );
+  }
 
   const staticEntries = STATIC_SITEMAP_URLS.map(([urlPath, file]) => ({
     loc: `${SITE_URL}/${urlPath}`,
@@ -672,10 +833,14 @@ async function generate() {
         summary.lastUpdated,
       ),
     }));
+  const reportEntries = Array.from({ length: reportPageCount }, (_, index) => ({
+    loc: `${SITE_URL}/trains/reports/${index + 1}/`,
+    lastmod: summary.lastUpdated.slice(0, 10),
+  }));
 
   await writeFile(
     path.join(ROOT, "sitemap-pages.xml"),
-    renderUrlSet(staticEntries),
+    renderUrlSet([...staticEntries, ...reportEntries]),
     "utf8",
   );
   await writeFile(
