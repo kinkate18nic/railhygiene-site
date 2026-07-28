@@ -1,0 +1,709 @@
+import { execFileSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const DATA_DIR = path.join(ROOT, "data");
+const TRAIN_ROOT = path.join(ROOT, "train");
+const TRAINS_DIRECTORY = path.join(ROOT, "trains");
+const TRAIN_CACHE = path.join(DATA_DIR, "train-directory.json");
+const SUMMARY_CACHE = path.join(DATA_DIR, "dashboard-summary.json");
+
+const TRAIN_LIST_URL =
+  process.env.TRAIN_LIST_URL ||
+  "https://gist.githubusercontent.com/kinkate18nic/f0ca9c369833451bb2940bcafe6dfe21/raw/train_list.json";
+const DASHBOARD_SUMMARY_URL =
+  process.env.DASHBOARD_SUMMARY_URL ||
+  "https://firestore.googleapis.com/v1/projects/railhygienemvp/databases/(default)/documents/dashboard/summary";
+const SITE_URL = "https://railhygiene.in";
+const MIN_TRAIN_COUNT = 3_000;
+const MAX_TRAIN_COUNT = 10_000;
+const offline = process.argv.includes("--offline");
+
+const STATIC_SITEMAP_URLS = [
+  ["", "index.html"],
+  ["railmadad-vs-railhygiene.html", "railmadad-vs-railhygiene.html"],
+  ["dashboard.html", "dashboard.html"],
+  ["privacy.html", "privacy.html"],
+  ["terms.html", "terms.html"],
+  ["trains/", "trains/index.html"],
+];
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function safeJson(value) {
+  return JSON.stringify(value).replaceAll("<", "\\u003c");
+}
+
+function clampRating(value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? Math.min(5, Math.max(0, numeric)) : 0;
+}
+
+function formatRating(value) {
+  return clampRating(value).toFixed(1);
+}
+
+function truncate(value, maxLength) {
+  const text = String(value ?? "").trim().replace(/\s+/g, " ");
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, Math.max(0, maxLength - 1)).trimEnd()}…`;
+}
+
+function normalizeTrain(raw) {
+  return {
+    number: String(raw?.number ?? "").trim(),
+    name: String(raw?.name ?? "").trim(),
+    src: String(raw?.src ?? "").trim(),
+    dest: String(raw?.dest ?? "").trim(),
+  };
+}
+
+function validateTrains(rawTrains) {
+  if (!Array.isArray(rawTrains)) {
+    throw new Error("Train directory must be a JSON array.");
+  }
+
+  const unique = new Map();
+  for (const raw of rawTrains) {
+    const train = normalizeTrain(raw);
+    if (!/^\d{5}$/.test(train.number)) {
+      throw new Error(`Invalid train number: ${train.number || "(empty)"}`);
+    }
+    if (!train.name || !train.src || !train.dest) {
+      throw new Error(`Train ${train.number} is missing name, source, or destination.`);
+    }
+    if (unique.has(train.number)) {
+      throw new Error(`Duplicate train number: ${train.number}`);
+    }
+    unique.set(train.number, train);
+  }
+
+  if (unique.size < MIN_TRAIN_COUNT || unique.size > MAX_TRAIN_COUNT) {
+    throw new Error(
+      `Train directory has ${unique.size} records; expected ${MIN_TRAIN_COUNT}-${MAX_TRAIN_COUNT}.`,
+    );
+  }
+
+  return [...unique.values()].sort((a, b) => a.number.localeCompare(b.number));
+}
+
+async function fetchJson(url, label) {
+  let lastError;
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          accept: "application/json",
+          "user-agent": "RailHygiene-GitHub-Pages-Generator/1.0",
+        },
+        signal: AbortSignal.timeout(60_000),
+      });
+      if (!response.ok) {
+        throw new Error(`${response.status} ${response.statusText}`);
+      }
+      return await response.json();
+    } catch (error) {
+      lastError = error;
+      if (attempt < 2) {
+        await new Promise((resolve) => setTimeout(resolve, 1_500));
+      }
+    }
+  }
+  throw new Error(`Unable to download ${label}: ${lastError?.message || lastError}`);
+}
+
+async function readJson(file) {
+  return JSON.parse(await readFile(file, "utf8"));
+}
+
+async function writeJson(file, value) {
+  await mkdir(path.dirname(file), { recursive: true });
+  await writeFile(file, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+}
+
+async function loadTrains() {
+  if (!offline) {
+    try {
+      const remote = await fetchJson(TRAIN_LIST_URL, "train directory");
+      const trains = validateTrains(remote);
+      await writeJson(TRAIN_CACHE, trains);
+      console.log(`Downloaded ${trains.length} trains from the maintained Gist.`);
+      return trains;
+    } catch (error) {
+      console.warn(`${error.message} Falling back to the committed snapshot.`);
+    }
+  }
+
+  if (!existsSync(TRAIN_CACHE)) {
+    throw new Error("No cached train directory is available.");
+  }
+  const trains = validateTrains(await readJson(TRAIN_CACHE));
+  console.log(`Loaded ${trains.length} trains from the committed snapshot.`);
+  return trains;
+}
+
+function normalizeFirestoreSummary(document) {
+  const fields = document?.fields;
+  const rawStats = fields?.statsByTrain?.stringValue;
+  if (!rawStats) {
+    throw new Error("Firestore dashboard summary does not contain statsByTrain.");
+  }
+
+  const statsByTrain = JSON.parse(rawStats);
+  if (!statsByTrain || typeof statsByTrain !== "object" || Array.isArray(statsByTrain)) {
+    throw new Error("Firestore statsByTrain is not an object.");
+  }
+
+  return {
+    lastUpdated:
+      fields?.lastUpdated?.timestampValue ||
+      document.updateTime ||
+      new Date(0).toISOString(),
+    statsByTrain,
+  };
+}
+
+function validateCachedSummary(summary) {
+  if (
+    !summary ||
+    typeof summary !== "object" ||
+    !summary.statsByTrain ||
+    typeof summary.statsByTrain !== "object" ||
+    Array.isArray(summary.statsByTrain)
+  ) {
+    throw new Error("Cached dashboard summary is invalid.");
+  }
+  return summary;
+}
+
+async function loadSummary() {
+  if (!offline) {
+    try {
+      const document = await fetchJson(DASHBOARD_SUMMARY_URL, "dashboard summary");
+      const summary = normalizeFirestoreSummary(document);
+      await writeJson(SUMMARY_CACHE, summary);
+      console.log(
+        `Downloaded aggregated ratings for ${Object.keys(summary.statsByTrain).length} trains.`,
+      );
+      return summary;
+    } catch (error) {
+      console.warn(`${error.message} Falling back to the committed snapshot.`);
+    }
+  }
+
+  if (!existsSync(SUMMARY_CACHE)) {
+    throw new Error("No cached dashboard summary is available.");
+  }
+  const summary = validateCachedSummary(await readJson(SUMMARY_CACHE));
+  console.log(
+    `Loaded aggregated ratings for ${Object.keys(summary.statsByTrain).length} trains from cache.`,
+  );
+  return summary;
+}
+
+function latestFeedbackDate(stats, fallback) {
+  const dates = Object.keys(stats?.feedbacksByDate || {}).filter((date) =>
+    /^\d{4}-\d{2}-\d{2}$/.test(date),
+  );
+  return dates.sort().at(-1) || fallback.slice(0, 10);
+}
+
+function coachEntries(stats) {
+  return Object.entries(stats?.coachStats || {}).sort(([a], [b]) =>
+    a.localeCompare(b, undefined, { numeric: true }),
+  );
+}
+
+function ratingMeter(label, value) {
+  const rating = formatRating(value);
+  const percentage = `${(clampRating(value) / 5) * 100}%`;
+  return `
+    <div class="rating-row">
+      <span>${escapeHtml(label)}</span>
+      <div class="meter" aria-hidden="true"><span style="width:${percentage}"></span></div>
+      <strong>${rating}/5</strong>
+    </div>`;
+}
+
+function renderCoachTable(stats) {
+  const coaches = coachEntries(stats);
+  if (!coaches.length) return "";
+
+  const rows = coaches
+    .map(
+      ([coach, values]) => `
+        <tr>
+          <th scope="row">${escapeHtml(coach)}</th>
+          <td>${Number(values.feedbackCount || 0)}</td>
+          <td>${formatRating(values.avgGeneralRating)}</td>
+          <td>${formatRating(values.avgFloorRating)}</td>
+          <td>${formatRating(values.avgToiletRating)}</td>
+        </tr>`,
+    )
+    .join("");
+
+  return `
+    <section class="panel" aria-labelledby="coach-heading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Coach breakdown</p>
+          <h2 id="coach-heading">Reported coach cleanliness</h2>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Coach</th>
+              <th>Reports</th>
+              <th>Overall</th>
+              <th>Floor</th>
+              <th>Toilets</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </section>`;
+}
+
+function renderRelatedTrains(related) {
+  if (!related.length) return "";
+  return `
+    <section class="panel related" aria-labelledby="related-heading">
+      <p class="eyebrow">Keep exploring</p>
+      <h2 id="related-heading">Related trains</h2>
+      <div class="related-grid">
+        ${related
+          .map(
+            (train) => `
+              <a href="/train/${train.number}/">
+                <strong>${escapeHtml(train.number)} · ${escapeHtml(train.name)}</strong>
+                <span>${escapeHtml(train.src)} → ${escapeHtml(train.dest)}</span>
+              </a>`,
+          )
+          .join("")}
+      </div>
+    </section>`;
+}
+
+function renderTrainPage(train, stats, related, summaryLastUpdated) {
+  const feedbackCount = Number(stats?.feedbackCount || 0);
+  const hasFeedback = feedbackCount > 0;
+  const canonical = `${SITE_URL}/train/${train.number}/`;
+  const title = truncate(
+    `${train.number} ${train.name} Cleanliness Ratings | RailHygiene`,
+    60,
+  );
+  const description = truncate(
+    hasFeedback
+      ? `Check ${feedbackCount} community cleanliness ${
+          feedbackCount === 1 ? "report" : "reports"
+        } for train ${train.number} ${train.name}, from ${train.src} to ${train.dest}, including coach, floor and toilet ratings.`
+      : `Find route details and contribute the first community coach cleanliness report for train ${train.number} ${train.name}, travelling from ${train.src} to ${train.dest}.`,
+    160,
+  );
+  const lastReport = hasFeedback
+    ? latestFeedbackDate(stats, summaryLastUpdated)
+    : null;
+  const robots = hasFeedback ? "index,follow" : "noindex,follow";
+
+  const webPageSchema = {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": `${canonical}#webpage`,
+        url: canonical,
+        name: title,
+        description,
+        isPartOf: {
+          "@type": "WebSite",
+          "@id": `${SITE_URL}/#website`,
+          name: "RailHygiene",
+          url: `${SITE_URL}/`,
+        },
+        about: {
+          "@type": "TrainTrip",
+          trainNumber: train.number,
+          trainName: train.name,
+          departureStation: { "@type": "TrainStation", name: train.src },
+          arrivalStation: { "@type": "TrainStation", name: train.dest },
+        },
+      };
+  const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: `${SITE_URL}/`,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Trains",
+            item: `${SITE_URL}/trains/`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: `Train ${train.number}`,
+            item: canonical,
+          },
+        ],
+      };
+
+  const dataPanel = hasFeedback
+    ? `
+      <section class="panel ratings" aria-labelledby="ratings-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Community snapshot</p>
+            <h2 id="ratings-heading">Cleanliness ratings</h2>
+          </div>
+          <div class="report-count">
+            <strong>${feedbackCount}</strong>
+            <span>${feedbackCount === 1 ? "report" : "reports"}</span>
+          </div>
+        </div>
+        ${ratingMeter("Overall coach", stats.avgGeneralRating)}
+        ${ratingMeter("Coach floor", stats.avgFloorRating)}
+        ${ratingMeter("Toilets", stats.avgToiletRating)}
+        ${ratingMeter("Dustbins", stats.avgDustbinRating)}
+        <p class="updated">Most recent recorded journey: <time datetime="${lastReport}">${escapeHtml(
+          lastReport,
+        )}</time></p>
+      </section>
+      ${renderCoachTable(stats)}`
+    : `
+      <section class="panel empty" aria-labelledby="empty-heading">
+        <span class="empty-icon" aria-hidden="true">✦</span>
+        <p class="eyebrow">Community data</p>
+        <h2 id="empty-heading">No cleanliness reports yet</h2>
+        <p>RailHygiene does not have a passenger report for this train yet. If you travel on it, your anonymous coach feedback can help the next passenger know what to expect.</p>
+      </section>`;
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${escapeHtml(title)}</title>
+  <meta name="description" content="${escapeHtml(description)}">
+  <meta name="robots" content="${robots}">
+  <link rel="canonical" href="${canonical}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="RailHygiene">
+  <meta property="og:title" content="${escapeHtml(title)}">
+  <meta property="og:description" content="${escapeHtml(description)}">
+  <meta property="og:url" content="${canonical}">
+  <meta property="og:image" content="${SITE_URL}/assets/android-chrome-512x512.png">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="application/ld+json">${safeJson(webPageSchema)}</script>
+  <script type="application/ld+json">${safeJson(breadcrumbSchema)}</script>
+  <style>
+    :root{color-scheme:light;--ink:#102a43;--muted:#52677b;--line:#d8e2ec;--blue:#0067a8;--blue-dark:#004f82;--sky:#e8f4ff;--surface:#fff;--bg:#f6f9fc;--gold:#f5b700;font-family:"Outfit",system-ui,sans-serif}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink)}a{color:inherit}.site-header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line)}.nav{width:min(1120px,calc(100% - 32px));margin:auto;min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-size:1.2rem;font-weight:700}.brand img{width:40px;height:40px;border-radius:10px}.nav-links{display:flex;gap:18px}.nav-links a{text-decoration:none;color:var(--muted);font-weight:600}.wrap{width:min(980px,calc(100% - 32px));margin:auto}.crumbs{padding:24px 0 12px;color:var(--muted);font-size:.92rem}.crumbs a{text-decoration:none}.hero{position:relative;overflow:hidden;padding:42px;border-radius:28px;background:linear-gradient(135deg,#004f82,#0879bb);color:#fff;box-shadow:0 22px 55px rgba(0,79,130,.18)}.hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-90px;top:-110px;background:rgba(255,255,255,.1)}.eyebrow{margin:0 0 8px;text-transform:uppercase;letter-spacing:.12em;font-size:.78rem;font-weight:700;color:#5b86a5}.hero .eyebrow{color:#bfe4ff}.hero h1{position:relative;margin:0;font-size:clamp(2rem,6vw,3.5rem);line-height:1.05;max-width:760px}.route{position:relative;margin:18px 0 0;font-size:1.2rem;color:#e8f4ff}.route span{padding:0 8px}.actions{position:relative;display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}.button{min-height:48px;display:inline-flex;align-items:center;justify-content:center;padding:0 20px;border-radius:13px;text-decoration:none;font-weight:700}.button.primary{background:#fff;color:var(--blue-dark)}.button.secondary{border:1px solid rgba(255,255,255,.65);color:#fff}.notice{margin:18px 0 0;color:#d9efff;font-size:.9rem}.grid{display:grid;gap:22px;margin:24px 0}.panel{padding:28px;border-radius:22px;background:var(--surface);border:1px solid var(--line);box-shadow:0 12px 30px rgba(16,42,67,.06)}.section-heading{display:flex;align-items:start;justify-content:space-between;gap:20px}.panel h2{margin:0 0 18px;font-size:1.55rem}.report-count{min-width:86px;padding:10px 14px;border-radius:16px;background:var(--sky);text-align:center}.report-count strong,.report-count span{display:block}.report-count strong{font-size:1.45rem;color:var(--blue)}.rating-row{display:grid;grid-template-columns:minmax(110px,1fr) minmax(120px,2fr) 56px;align-items:center;gap:14px;padding:12px 0;border-top:1px solid #edf2f7}.meter{height:9px;border-radius:999px;background:#e7edf3;overflow:hidden}.meter span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--gold),#ffd866)}.rating-row strong{text-align:right}.updated{margin:16px 0 0;color:var(--muted);font-size:.9rem}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:620px}th,td{padding:13px 12px;border-bottom:1px solid #e8eef3;text-align:right}th:first-child,td:first-child{text-align:left}thead th{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.empty{text-align:center;padding:44px 28px}.empty-icon{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 18px;border-radius:18px;background:var(--sky);color:var(--blue);font-size:1.7rem}.empty p:last-child{max-width:620px;margin:0 auto;color:var(--muted);line-height:1.65}.related-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.related-grid a{display:block;padding:16px;border:1px solid var(--line);border-radius:15px;text-decoration:none}.related-grid a:hover{border-color:#79b7dd;background:#f7fbff}.related-grid strong,.related-grid span{display:block}.related-grid span{margin-top:5px;color:var(--muted);font-size:.9rem}.disclaimer{padding:22px;border-radius:18px;background:#fff8e7;border:1px solid #f0d899;color:#644d12;line-height:1.6}.site-footer{margin-top:40px;padding:28px 16px;text-align:center;color:var(--muted);border-top:1px solid var(--line);background:#fff}.site-footer a{margin:0 8px}@media(max-width:680px){.nav-links{display:none}.hero{padding:30px 24px;border-radius:22px}.panel{padding:22px}.rating-row{grid-template-columns:1fr 50px}.meter{grid-column:1/-1;grid-row:2}.related-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="40" height="40">RailHygiene</a>
+      <div class="nav-links"><a href="/trains/">Find a train</a><a href="/dashboard.html">Live data</a></div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/trains/">Trains</a> / ${escapeHtml(
+      train.number,
+    )}</nav>
+    <section class="hero">
+      <p class="eyebrow">Indian Railways cleanliness reports</p>
+      <h1>${escapeHtml(train.number)} · ${escapeHtml(train.name)}</h1>
+      <p class="route">${escapeHtml(train.src)} <span aria-hidden="true">→</span> ${escapeHtml(train.dest)}</p>
+      <div class="actions">
+        <a class="button primary" href="/open?train=${train.number}">Open in RailHygiene</a>
+        <a class="button secondary" href="/trains/">Search another train</a>
+      </div>
+      <p class="notice">Community-submitted historical data. RailHygiene is independent and is not affiliated with Indian Railways or IRCTC.</p>
+    </section>
+    <div class="grid">
+      ${dataPanel}
+      ${renderRelatedTrains(related)}
+      <aside class="disclaimer"><strong>Need cleaning help now?</strong> Use the official RailMadad service or call railway helpline 139. RailHygiene records anonymous historical feedback for future passengers and does not resolve complaints.</aside>
+    </div>
+  </main>
+  <footer class="site-footer">© RailHygiene · <a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></footer>
+</body>
+</html>`;
+}
+
+function renderDirectoryPage(trains, feedbackTrainNumbers, lastUpdated) {
+  const featured = trains
+    .filter((train) => feedbackTrainNumbers.has(train.number))
+    .slice(0, 100);
+  const featuredMarkup = featured
+    .map(
+      (train) => `
+        <li>
+          <a href="/train/${train.number}/">
+            <strong>${escapeHtml(train.number)} · ${escapeHtml(train.name)}</strong>
+            <span>${escapeHtml(train.src)} → ${escapeHtml(train.dest)}</span>
+          </a>
+        </li>`,
+    )
+    .join("");
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Search Indian Train Cleanliness Ratings | RailHygiene</title>
+  <meta name="description" content="Search Indian Railways trains by number or name and view community-reported coach, floor, toilet and dustbin cleanliness information on RailHygiene.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="${SITE_URL}/trains/">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{font-family:"Outfit",system-ui,sans-serif;color:#102a43;background:#f6f9fc;--blue:#0067a8;--line:#d8e2ec;--muted:#52677b}*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:1px solid var(--line)}nav,main{width:min(980px,calc(100% - 32px));margin:auto}.top{min-height:72px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;font-size:1.2rem;font-weight:700}.brand img{width:40px;height:40px;border-radius:10px}.back{color:var(--blue);font-weight:600;text-decoration:none}.hero{padding:64px 0 30px}.hero h1{margin:0;font-size:clamp(2.2rem,7vw,4rem);line-height:1}.hero p{max-width:680px;color:var(--muted);font-size:1.08rem;line-height:1.65}.search{position:relative;margin:24px 0}.search label{display:block;margin-bottom:8px;font-weight:600}.search input{width:100%;min-height:60px;padding:0 20px;border:2px solid #9db2c5;border-radius:16px;background:#fff;font:inherit;font-size:1.08rem}.search input:focus{outline:3px solid #bde3ff;border-color:var(--blue)}.status{min-height:24px;color:var(--muted)}ul{list-style:none;margin:20px 0 60px;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}li a{display:block;padding:18px;border:1px solid var(--line);border-radius:16px;background:#fff;color:inherit;text-decoration:none}li a:hover{border-color:#67add7;box-shadow:0 8px 20px rgba(16,42,67,.07)}li strong,li span{display:block}li span{margin-top:6px;color:var(--muted);font-size:.92rem}.empty{grid-column:1/-1;padding:30px;text-align:center;color:var(--muted)}footer{padding:28px;text-align:center;background:#fff;border-top:1px solid var(--line);color:var(--muted)}@media(max-width:650px){ul{grid-template-columns:1fr}.hero{padding-top:44px}}
+  </style>
+</head>
+<body>
+  <header><nav class="top"><a class="brand" href="/"><img src="/assets/logo.png" alt="" width="40" height="40">RailHygiene</a><a class="back" href="/">Home</a></nav></header>
+  <main>
+    <section class="hero">
+      <h1>Find your train</h1>
+      <p>Search ${trains.length.toLocaleString("en-IN")} maintained Indian Railways services. Trains with community reports include coach, floor, toilet and dustbin cleanliness details.</p>
+      <div class="search"><label for="train-search">Train number or name</label><input id="train-search" type="search" inputmode="search" autocomplete="off" placeholder="Try 16526 or train name"></div>
+      <p id="status" class="status" aria-live="polite">Showing trains with available community reports.</p>
+    </section>
+    <ul id="results">${featuredMarkup}</ul>
+  </main>
+  <footer>Directory data refreshed automatically. Rating snapshot: <time datetime="${escapeHtml(
+    lastUpdated,
+  )}">${escapeHtml(lastUpdated.slice(0, 10))}</time>.</footer>
+  <script>
+    const input = document.getElementById("train-search");
+    const results = document.getElementById("results");
+    const status = document.getElementById("status");
+    let trains = [];
+
+    const render = (items) => {
+      results.replaceChildren();
+      if (!items.length) {
+        const item = document.createElement("li");
+        item.className = "empty";
+        item.textContent = "No matching train was found in the maintained directory.";
+        results.append(item);
+        return;
+      }
+      for (const train of items.slice(0, 50)) {
+        const item = document.createElement("li");
+        const link = document.createElement("a");
+        const title = document.createElement("strong");
+        const route = document.createElement("span");
+        link.href = "/train/" + encodeURIComponent(train.number) + "/";
+        title.textContent = String(train.number || "") + " · " + String(train.name || "");
+        route.textContent = String(train.src || "") + " → " + String(train.dest || "");
+        link.append(title, route);
+        item.append(link);
+        results.append(item);
+      }
+    };
+
+    fetch("/data/train-directory.json")
+      .then((response) => {
+        if (!response.ok) throw new Error("Train directory unavailable");
+        return response.json();
+      })
+      .then((data) => { trains = data; })
+      .catch(() => {
+        status.textContent = "Live search is temporarily unavailable. Please try again later.";
+      });
+
+    input.addEventListener("input", () => {
+      const query = input.value.trim().toLowerCase();
+      if (!query) {
+        status.textContent = "Enter a train number or name.";
+        results.replaceChildren();
+        return;
+      }
+      const matches = trains.filter((train) =>
+        [train.number, train.name, train.src, train.dest]
+          .some((value) => String(value).toLowerCase().includes(query))
+      );
+      status.textContent = matches.length
+        ? "Found " + matches.length + " matching " + (matches.length === 1 ? "train." : "trains.")
+        : "No matching train found.";
+      render(matches);
+    });
+  </script>
+</body>
+</html>`;
+}
+
+function gitLastModified(relativeFile) {
+  try {
+    const dirty = execFileSync(
+      "git",
+      ["status", "--porcelain", "--", relativeFile],
+      { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
+    ).trim();
+    if (dirty) return new Date().toISOString().slice(0, 10);
+
+    return execFileSync(
+      "git",
+      ["log", "-1", "--format=%cs", "--", relativeFile],
+      { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
+    ).trim();
+  } catch {
+    return "";
+  }
+}
+
+function renderUrlSet(entries) {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${entries
+  .map(
+    ({ loc, lastmod }) => `  <url>
+    <loc>${escapeHtml(loc)}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ""}
+  </url>`,
+  )
+  .join("\n")}
+</urlset>
+`;
+}
+
+async function generate() {
+  const [trains, summary] = await Promise.all([loadTrains(), loadSummary()]);
+  const trainNumbers = new Set(trains.map((train) => train.number));
+  const feedbackTrainNumbers = new Set(
+    Object.entries(summary.statsByTrain)
+      .filter(
+        ([number, stats]) =>
+          trainNumbers.has(number) && Number(stats?.feedbackCount || 0) > 0,
+      )
+      .map(([number]) => number),
+  );
+
+  const bySource = new Map();
+  const byDestination = new Map();
+  for (const train of trains) {
+    const sourceKey = train.src.toLowerCase();
+    const destinationKey = train.dest.toLowerCase();
+    if (!bySource.has(sourceKey)) bySource.set(sourceKey, []);
+    if (!byDestination.has(destinationKey)) byDestination.set(destinationKey, []);
+    bySource.get(sourceKey).push(train);
+    byDestination.get(destinationKey).push(train);
+  }
+
+  await rm(TRAIN_ROOT, { recursive: true, force: true });
+  await mkdir(TRAIN_ROOT, { recursive: true });
+  await mkdir(TRAINS_DIRECTORY, { recursive: true });
+
+  for (const train of trains) {
+    const relatedCandidates = [
+      ...(bySource.get(train.src.toLowerCase()) || []),
+      ...(byDestination.get(train.dest.toLowerCase()) || []),
+    ];
+    const related = [
+      ...new Map(
+        relatedCandidates
+          .filter((candidate) => candidate.number !== train.number)
+          .sort(
+            (a, b) =>
+              Number(feedbackTrainNumbers.has(b.number)) -
+                Number(feedbackTrainNumbers.has(a.number)) ||
+              a.number.localeCompare(b.number),
+          )
+          .map((candidate) => [candidate.number, candidate]),
+      ).values(),
+    ].slice(0, 4);
+
+    const directory = path.join(TRAIN_ROOT, train.number);
+    await mkdir(directory, { recursive: true });
+    await writeFile(
+      path.join(directory, "index.html"),
+      renderTrainPage(
+        train,
+        summary.statsByTrain[train.number],
+        related,
+        summary.lastUpdated,
+      ),
+      "utf8",
+    );
+  }
+
+  await writeFile(
+    path.join(TRAINS_DIRECTORY, "index.html"),
+    renderDirectoryPage(trains, feedbackTrainNumbers, summary.lastUpdated),
+    "utf8",
+  );
+
+  const staticEntries = STATIC_SITEMAP_URLS.map(([urlPath, file]) => ({
+    loc: `${SITE_URL}/${urlPath}`,
+    lastmod: gitLastModified(file),
+  }));
+  const trainEntries = trains
+    .filter((train) => feedbackTrainNumbers.has(train.number))
+    .map((train) => ({
+      loc: `${SITE_URL}/train/${train.number}/`,
+      lastmod: latestFeedbackDate(
+        summary.statsByTrain[train.number],
+        summary.lastUpdated,
+      ),
+    }));
+
+  await writeFile(
+    path.join(ROOT, "sitemap-pages.xml"),
+    renderUrlSet(staticEntries),
+    "utf8",
+  );
+  await writeFile(
+    path.join(ROOT, "sitemap-trains.xml"),
+    renderUrlSet(trainEntries),
+    "utf8",
+  );
+  await writeFile(
+    path.join(ROOT, "sitemap.xml"),
+    `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${SITE_URL}/sitemap-pages.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>${SITE_URL}/sitemap-trains.xml</loc>
+  </sitemap>
+</sitemapindex>
+`,
+    "utf8",
+  );
+
+  console.log(
+    `Generated ${trains.length} train pages; ${trainEntries.length} feedback-rich pages are indexable.`,
+  );
+}
+
+generate().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

@@ -94,7 +94,7 @@
     <h1 id="title">Open train ratings</h1>
     <p id="description">Continue in RailHygiene to view available coach hygiene reports.</p>
     <div class="actions">
-      <a id="open-app" class="primary" href="https://railhygiene.in/open">Open RailHygiene</a>
+      <a id="open-app" class="primary" href="intent://railhygiene.in/open#Intent;scheme=https;package=com.nish.railhygiene;end">Open RailHygiene</a>
       <a class="secondary" href="https://play.google.com/store/apps/details?id=com.nish.railhygiene&amp;referrer=utm_source%3Drailhygiene_app_link%26utm_medium%3Dwebsite%26utm_campaign%3Dapp_link_fallback">Get the Android app</a>
     </div>
     <p class="note">RailHygiene is an independent community platform.</p>
@@ -112,7 +112,15 @@
         "Continue in RailHygiene to view available coach hygiene reports for this train.";
     }
 
-    document.getElementById("open-app").href = target.toString();
+    const fallback = encodeURIComponent(
+      "https://play.google.com/store/apps/details?id=com.nish.railhygiene" +
+      "&referrer=utm_source%3Drailhygiene_app_link%26utm_medium%3Dwebsite%26utm_campaign%3Dapp_link_fallback"
+    );
+    const intentQuery = isValidTrain ? `?train=${encodeURIComponent(train)}` : "";
+    document.getElementById("open-app").href =
+      `intent://railhygiene.in/open${intentQuery}` +
+      `#Intent;scheme=https;package=com.nish.railhygiene;` +
+      `S.browser_fallback_url=${fallback};end`;
   </script>
 </body>
 </html>

@@ -1,0 +1,54 @@
+name: Refresh train pages
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "35 2 * * *"
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/**"
+      - ".github/workflows/refresh-train-pages.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-train-pages
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out website
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Generate train pages and sitemaps
+        run: node scripts/generate-train-pages.mjs
+
+      - name: Validate generated pages
+        run: node scripts/validate-train-pages.mjs
+
+      - name: Commit refreshed public data
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- data train trains sitemap.xml sitemap-pages.xml sitemap-trains.xml
+          if git diff --cached --quiet; then
+            echo "Train pages are already current."
+            exit 0
+          fi
+          git commit -m "Refresh generated train pages"
+          git push
