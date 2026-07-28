@@ -1,0 +1,13 @@
+{
+  "files": [
+    "*.html",
+    "open/**/*.html",
+    "trains/**/*.html"
+  ],
+  "exclude": [
+    "train/**/*.html"
+  ],
+  "insertBefore": "</body>",
+  "commentSyntax": "html",
+  "cspChecked": true
+}

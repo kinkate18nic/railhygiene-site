@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <title>Indian Railways Coach Cleanliness Ratings | RailHygiene</title>
   <meta name="description" content="Check crowdsourced hygiene ratings for Indian Railways train coaches. Enter your PNR or train number to see reviews on toilet and seat cleanliness." />
 
@@ -26,7 +26,7 @@
   <link rel="manifest" href="assets/site.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -40,12 +40,29 @@
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       margin: 0;
       padding: 0;
       background-color: var(--bg-color);
       color: var(--text-main);
       overflow-x: hidden;
+    }
+
+    .skip-link {
+      position: fixed;
+      inset: 8px auto auto 8px;
+      z-index: 200;
+      min-height: 44px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: var(--primary-dark);
+      color: #fff;
+      text-decoration: none;
+      transform: translateY(-140%);
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
     }
 
     .container {
@@ -219,6 +236,25 @@
       line-height: 1.6;
       margin: 0;
       text-align: center;
+    }
+
+    .carousel-toggle {
+      min-width: 160px;
+      min-height: 44px;
+      margin-top: 14px;
+      padding: 0 18px;
+      border: 1px solid #94a3b8;
+      border-radius: 12px;
+      background: #fff;
+      color: var(--primary-dark);
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .carousel-toggle:focus-visible {
+      outline: 3px solid #93c5fd;
+      outline-offset: 3px;
     }
 
     /* --- Sections --- */
@@ -420,6 +456,11 @@
     }
 
     .footer a {
+      min-height: 44px;
+      padding: 0 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       color: var(--primary-blue);
       text-decoration: none;
       font-weight: 500;
@@ -434,7 +475,7 @@
 
     .footer-copy {
       margin-top: 20px;
-      color: #94a3b8;
+      color: #64748b;
     }
 
     /* --- Media Queries --- */
@@ -557,6 +598,10 @@
     }
 
     .nav-links a {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       color: var(--text-muted);
       text-decoration: none;
       font-weight: 500;
@@ -569,8 +614,41 @@
     }
 
     @media (max-width: 600px) {
+      .main-nav {
+        padding: 8px 12px;
+      }
+
       .nav-container {
         justify-content: center;
+      }
+
+      .nav-links {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 0.75fr 1fr 1.75fr;
+        gap: 4px;
+      }
+
+      .nav-links a {
+        padding: 4px;
+        font-size: 0.875rem;
+        line-height: 1.25;
+        text-align: center;
+      }
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid #93c5fd;
+      outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
       }
     }
 
@@ -643,6 +721,7 @@
   </script>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <!-- Navigation bar -->
   <header class="main-nav">
     <div class="nav-container">
@@ -654,6 +733,7 @@
     </div>
   </header>
 
+  <main id="main-content">
   <!-- Hero Section -->
   <div class="container">
     <div class="text-section">
@@ -698,8 +778,9 @@
       </div>
 
       <div id="slide-description">
-        <h3 id="slide-title"></h3>
+        <h2 id="slide-title"></h2>
         <p id="slide-text"></p>
+        <button id="carousel-toggle" class="carousel-toggle" type="button" aria-pressed="false">Pause screenshots</button>
       </div>
     </div>
   </div>
@@ -796,14 +877,18 @@
     </div>
     <div class="video-wrapper">
       <iframe 
-        src="https://www.youtube.com/embed/IIgw3UGdBOw" 
+        src="https://www.youtube-nocookie.com/embed/IIgw3UGdBOw"
         title="RailHygiene App Demo" 
+        loading="lazy"
         frameborder="0" 
+        referrerpolicy="strict-origin-when-cross-origin"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
         allowfullscreen>
       </iframe>
     </div>
   </div>
+
+  </main>
 
   <!-- Footer -->
   <footer class="footer">
@@ -821,6 +906,8 @@
     const descriptionContainer = document.getElementById('slide-description');
     const slideTitle = document.getElementById('slide-title');
     const slideText = document.getElementById('slide-text');
+    const carouselToggle = document.getElementById('carousel-toggle');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     const slideDescriptions = [
         { title: "Search a PNR or Train", text: "Quickly search for any train or PNR." },
@@ -837,29 +924,68 @@
     ];
 
     let index = 0;
+    let carouselTimer = null;
+    let transitionTimer = null;
     
     function updateContent() {
       if (slides.length === 0) return;
       slideTitle.textContent = slideDescriptions[index].title;
       slideText.textContent = slideDescriptions[index].text;
       track.style.transform = `translateX(-${index * 100}%)`;
+      slides.forEach((slide, slideIndex) => {
+        slide.setAttribute('aria-hidden', slideIndex === index ? 'false' : 'true');
+      });
     }
     
     function cycleContent() {
       descriptionContainer.classList.add('fade-out');
       
-      setTimeout(() => {
+      transitionTimer = window.setTimeout(() => {
           index = (index + 1) % slides.length;
           updateContent();
           descriptionContainer.classList.remove('fade-out');
+          transitionTimer = null;
       }, 400); // Wait for fade out
     }
+
+    function startCarousel() {
+      if (carouselTimer !== null) return;
+      carouselTimer = window.setInterval(cycleContent, 3500);
+      carouselToggle.textContent = 'Pause screenshots';
+      carouselToggle.setAttribute('aria-pressed', 'false');
+    }
+
+    function stopCarousel() {
+      if (carouselTimer !== null) {
+        window.clearInterval(carouselTimer);
+        carouselTimer = null;
+      }
+      if (transitionTimer !== null) {
+        window.clearTimeout(transitionTimer);
+        transitionTimer = null;
+        descriptionContainer.classList.remove('fade-out');
+      }
+      carouselToggle.textContent = 'Play screenshots';
+      carouselToggle.setAttribute('aria-pressed', 'true');
+    }
+
+    carouselToggle.addEventListener('click', () => {
+      if (carouselTimer === null) {
+        startCarousel();
+      } else {
+        stopCarousel();
+      }
+    });
 
     // Initialize content
     updateContent();
 
-    // Start cycle
-    setInterval(cycleContent, 3500);
+    // Respect the user's motion preference and provide a visible pause control.
+    if (reducedMotion.matches) {
+      stopCarousel();
+    } else {
+      startCarousel();
+    }
   </script>
 </body>
 </html>
