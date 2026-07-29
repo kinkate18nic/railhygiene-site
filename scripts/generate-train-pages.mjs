@@ -62,6 +62,18 @@ function formatRating(value) {
   return clampRating(value).toFixed(1);
 }
 
+function hasReportedRating(stats, component, value) {
+  const count = stats?.ratingCounts?.[component];
+  if (typeof count === "number") return count > 0;
+  return clampRating(value) > 0;
+}
+
+function formatScopedRating(stats, component, value) {
+  return hasReportedRating(stats, component, value)
+    ? formatRating(value)
+    : "N/A";
+}
+
 function truncate(value, maxLength) {
   const text = String(value ?? "").trim().replace(/\s+/g, " ");
   if (text.length <= maxLength) return text;
@@ -233,14 +245,15 @@ function coachEntries(stats) {
   );
 }
 
-function ratingMeter(label, value) {
-  const rating = formatRating(value);
-  const percentage = `${(clampRating(value) / 5) * 100}%`;
+function ratingMeter(label, value, stats, component) {
+  const hasRating = hasReportedRating(stats, component, value);
+  const rating = hasRating ? `${formatRating(value)}/5` : "Not rated";
+  const percentage = hasRating ? `${(clampRating(value) / 5) * 100}%` : "0%";
   return `
     <div class="rating-row">
       <span>${escapeHtml(label)}</span>
       <div class="meter" aria-hidden="true"><span style="width:${percentage}"></span></div>
-      <strong>${rating}/5</strong>
+      <strong>${rating}</strong>
     </div>`;
 }
 
@@ -282,9 +295,9 @@ function renderCoachTable(stats) {
         <tr>
           <th scope="row">${escapeHtml(coach)}</th>
           <td>${Number(values.feedbackCount || 0)}</td>
-          <td>${formatRating(values.avgGeneralRating)}</td>
-          <td>${formatRating(values.avgFloorRating)}</td>
-          <td>${formatRating(values.avgToiletRating)}</td>
+          <td>${formatScopedRating(values, "generalCoach", values.avgGeneralRating)}</td>
+          <td>${formatScopedRating(values, "coachFloor", values.avgFloorRating)}</td>
+          <td>${formatScopedRating(values, "toilet", values.avgToiletRating)}</td>
         </tr>`,
     )
     .join("");
@@ -414,10 +427,10 @@ function renderTrainPage(train, stats, related, summaryLastUpdated) {
             <span>${feedbackCount === 1 ? "report" : "reports"}</span>
           </div>
         </div>
-        ${ratingMeter("Overall coach", stats.avgGeneralRating)}
-        ${ratingMeter("Coach floor", stats.avgFloorRating)}
-        ${ratingMeter("Toilets", stats.avgToiletRating)}
-        ${ratingMeter("Dustbins", stats.avgDustbinRating)}
+        ${ratingMeter("Overall coach", stats.avgGeneralRating, stats, "generalCoach")}
+        ${ratingMeter("Coach floor", stats.avgFloorRating, stats, "coachFloor")}
+        ${ratingMeter("Toilets", stats.avgToiletRating, stats, "toilet")}
+        ${ratingMeter("Dustbins", stats.avgDustbinRating, stats, "dustbin")}
         <p class="updated">Most recent recorded journey: <time datetime="${lastReport}">${escapeHtml(
           lastReport,
         )}</time></p>
