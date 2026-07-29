@@ -19,6 +19,14 @@ const DASHBOARD_SUMMARY_URL =
   process.env.DASHBOARD_SUMMARY_URL ||
   "https://firestore.googleapis.com/v1/projects/railhygienemvp/databases/(default)/documents/dashboard/summary";
 const SITE_URL = "https://railhygiene.in";
+const GA4_TAG = `  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6328SPQDYL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-6328SPQDYL');
+  </script>`;
 const MIN_TRAIN_COUNT = 3_000;
 const MAX_TRAIN_COUNT = 10_000;
 const offline = process.argv.includes("--offline");
@@ -447,6 +455,7 @@ function renderTrainPage(train, stats, related, summaryLastUpdated) {
   return `<!doctype html>
 <html lang="en">
 <head>
+${GA4_TAG}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>${escapeHtml(title)}</title>
@@ -534,6 +543,7 @@ function renderDirectoryPage(trains, feedbackTrainNumbers, lastUpdated) {
   return `<!doctype html>
 <html lang="en">
 <head>
+${GA4_TAG}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Search Indian Train Cleanliness Ratings | RailHygiene</title>
@@ -668,6 +678,7 @@ function renderReportsPage(trains, page, pageCount, lastUpdated) {
   return `<!doctype html>
 <html lang="en">
 <head>
+${GA4_TAG}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Indian Train Cleanliness Reports – Page ${page} | RailHygiene</title>
