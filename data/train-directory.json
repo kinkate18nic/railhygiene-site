@@ -516,6 +516,12 @@
     "dest": "New Delhi"
   },
   {
+    "number": "04114",
+    "name": "UBL PRYJ SPL",
+    "src": "HUBBALLI JN",
+    "dest": "PRAYAGRAJ JN"
+  },
+  {
     "number": "04115",
     "name": "SFG LTT  SPL",
     "src": "Subedarganj",
@@ -850,6 +856,12 @@
     "name": "KSR Bengaluru SPL",
     "src": "Lalkuan Jn",
     "dest": "KSR Bengaluru"
+  },
+  {
+    "number": "05193",
+    "name": "CPR JAT SPECIAL",
+    "src": "CHHAPRA",
+    "dest": "PATHANKOT"
   },
   {
     "number": "05289",
@@ -1314,6 +1326,12 @@
     "dest": "Nanded"
   },
   {
+    "number": "07622",
+    "name": "NED SUMMER SPL",
+    "src": "H NIZAMUDDIN",
+    "dest": "H SAHIB NANDED"
+  },
+  {
     "number": "07757",
     "name": "SECUNDERABAD JN - VIJAYAWADA JN SPECIAL",
     "src": "Secunderabad Jn",
@@ -1522,6 +1540,12 @@
     "name": "BHUJ BDTS SF SPL",
     "src": "Bhuj",
     "dest": "Bandra Terminus"
+  },
+  {
+    "number": "09048",
+    "name": "JJP UDN SUMM SPL",
+    "src": "JHANJHARPUR",
+    "dest": "UDHNA JN"
   },
   {
     "number": "09065",
@@ -2800,6 +2824,12 @@
     "name": "BINA-BPL EXP MEMU",
     "src": "Bina",
     "dest": "Bhopal"
+  },
+  {
+    "number": "11632",
+    "name": "DHANBAD JN",
+    "src": "JHANJHARPUR",
+    "dest": "BHOPAL JN"
   },
   {
     "number": "11703",
@@ -8706,6 +8736,12 @@
     "dest": "Jammu Tawi"
   },
   {
+    "number": "13042",
+    "name": "HIMGIRI EXPRESS",
+    "src": "JAMMU TAWI",
+    "dest": "HOWRAH JN"
+  },
+  {
     "number": "13043",
     "name": "HWH RXL EXP",
     "src": "Howrah",
@@ -12606,6 +12642,12 @@
     "dest": "Thiruvananthapuram Central"
   },
   {
+    "number": "15610",
+    "name": "SANG GHY EXPRESS",
+    "src": "SAIRANG",
+    "dest": "GUWAHATI"
+  },
+  {
     "number": "15611",
     "name": "RNY SCL EXP",
     "src": "Rangiya",
@@ -15882,6 +15924,12 @@
     "dest": "SSS Hubballi"
   },
   {
+    "number": "17364",
+    "name": "YNRK UBL EXP",
+    "src": "YOG N RISHIKESH",
+    "dest": "SSS HUBBALLI JN"
+  },
+  {
     "number": "17391",
     "name": "SBC-SNNR EXP",
     "src": "KSR Bengaluru",
@@ -16102,6 +16150,12 @@
     "name": "VISAKHAPATNAM - TIRUPATI TIRUMALA EXP",
     "src": "Visakhapatnam",
     "dest": "Tirupati"
+  },
+  {
+    "number": "17601",
+    "name": "KCG SGNR EXP",
+    "src": "KACHEGUDA",
+    "dest": "SHRI GANGANAGAR"
   },
   {
     "number": "17603",
@@ -18792,6 +18846,12 @@
     "dest": "Ahmedabad"
   },
   {
+    "number": "19559",
+    "name": "TPTY OKHA EXP",
+    "src": "TIRUPATI",
+    "dest": "OKHA"
+  },
+  {
     "number": "19565",
     "name": "OKHA DDN EXP",
     "src": "Okha",
@@ -19174,6 +19234,12 @@
     "name": "BXN JP EXP",
     "src": "Bayana",
     "dest": "Jaipur"
+  },
+  {
+    "number": "19726",
+    "name": "AMRIT BHARAT EXP",
+    "src": "DARBHANGA JN",
+    "dest": "KHATIPURA"
   },
   {
     "number": "19735",
@@ -19662,6 +19728,12 @@
     "dest": "Dibrugarh Town"
   },
   {
+    "number": "20507",
+    "name": "RAJDHANI EXP",
+    "src": "SAIRANG",
+    "dest": "ANAND VIHAR TRM"
+  },
+  {
     "number": "20508",
     "name": "SANG RAJDHANI",
     "src": "Anand Vihar Terminal",
@@ -19708,6 +19780,12 @@
     "name": "MALGUDI EXP",
     "src": "KSR Bengaluru",
     "dest": "Mysuru"
+  },
+  {
+    "number": "20626",
+    "name": "BGKT MAS SF EXP",
+    "src": "BHAGAT KI KOTHI",
+    "dest": "MGR CHENNAI CTL"
   },
   {
     "number": "20627",
