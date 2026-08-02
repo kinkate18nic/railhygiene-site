@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-31T08:14:11.257Z",
+  "lastUpdated": "2026-08-01T07:40:30.820Z",
   "statsByTrain": {
     "10116": {
       "trainName": "MAO BDTS EXPRESS",
@@ -1386,6 +1386,83 @@
       "avgFloorRating": 3,
       "avgToiletRating": 1,
       "avgDustbinRating": 4
+    },
+    "11302": {
+      "trainName": "UDYAN EXP",
+      "feedbackCount": 1,
+      "sumGeneralRating": 0,
+      "sumFloorRating": 0,
+      "sumToiletRating": 6,
+      "sumDustbinRating": 0,
+      "ratingCounts": {
+        "generalCoach": 0,
+        "coachFloor": 0,
+        "toilet": 2,
+        "dustbin": 0
+      },
+      "statusCounts": {
+        "coachFloorStatus": {},
+        "toilet1Status": {
+          "Clean": 1
+        },
+        "toilet2Status": {
+          "Clean": 1
+        },
+        "dustbin1Status": {},
+        "dustbin2Status": {}
+      },
+      "booleanCounts": {
+        "toilet1Trash": 0,
+        "toilet2Trash": 0,
+        "toilet1WaterNA": 1,
+        "toilet2WaterNA": 1
+      },
+      "feedbacksByDate": {
+        "2026-07-31": 1
+      },
+      "coachStats": {
+        "S8": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 0,
+          "sumToiletRating": 6,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 0,
+            "toilet": 2,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Clean": 1
+            },
+            "toilet2Status": {
+              "Clean": 1
+            },
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 1,
+            "toilet2WaterNA": 1
+          },
+          "feedbacksByDate": {
+            "2026-07-31": 1
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 0,
+          "avgToiletRating": 3,
+          "avgDustbinRating": 0
+        }
+      },
+      "avgGeneralRating": 0,
+      "avgFloorRating": 0,
+      "avgToiletRating": 3,
+      "avgDustbinRating": 0
     },
     "11401": {
       "trainName": "PUNE SUPAUL EXP",
