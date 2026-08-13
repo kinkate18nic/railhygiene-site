@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-11T06:12:38.933Z",
+  "lastUpdated": "2026-08-12T06:51:20.549Z",
   "statsByTrain": {
     "10116": {
       "trainName": "MAO BDTS EXPRESS",
@@ -12222,6 +12222,79 @@
       "avgGeneralRating": 0,
       "avgFloorRating": 0,
       "avgToiletRating": 1,
+      "avgDustbinRating": 0
+    },
+    "12780": {
+      "trainName": "GOA EXPRESS",
+      "feedbackCount": 1,
+      "sumGeneralRating": 0,
+      "sumFloorRating": 2,
+      "sumToiletRating": 0,
+      "sumDustbinRating": 0,
+      "ratingCounts": {
+        "generalCoach": 0,
+        "coachFloor": 1,
+        "toilet": 0,
+        "dustbin": 0
+      },
+      "statusCounts": {
+        "coachFloorStatus": {
+          "Dirty": 1
+        },
+        "toilet1Status": {},
+        "toilet2Status": {},
+        "dustbin1Status": {},
+        "dustbin2Status": {}
+      },
+      "booleanCounts": {
+        "toilet1Trash": 0,
+        "toilet2Trash": 0,
+        "toilet1WaterNA": 0,
+        "toilet2WaterNA": 0
+      },
+      "feedbacksByDate": {
+        "2026-08-10": 1
+      },
+      "coachStats": {
+        "M1": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 2,
+          "sumToiletRating": 0,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 1,
+            "toilet": 0,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {
+              "Dirty": 1
+            },
+            "toilet1Status": {},
+            "toilet2Status": {},
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 0,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-08-10": 1
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 2,
+          "avgToiletRating": 0,
+          "avgDustbinRating": 0
+        }
+      },
+      "avgGeneralRating": 0,
+      "avgFloorRating": 2,
+      "avgToiletRating": 0,
       "avgDustbinRating": 0
     },
     "12792": {
