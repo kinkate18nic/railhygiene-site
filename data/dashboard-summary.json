@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-24T06:01:19.627Z",
+  "lastUpdated": "2026-08-25T05:56:16.431Z",
   "statsByTrain": {
     "10116": {
       "trainName": "MAO BDTS EXPRESS",
@@ -4720,6 +4720,83 @@
       "avgGeneralRating": 0,
       "avgFloorRating": 0,
       "avgToiletRating": 1,
+      "avgDustbinRating": 0
+    },
+    "12214": {
+      "trainName": "DEE YPR DURONTO",
+      "feedbackCount": 1,
+      "sumGeneralRating": 0,
+      "sumFloorRating": 0,
+      "sumToiletRating": 6,
+      "sumDustbinRating": 0,
+      "ratingCounts": {
+        "generalCoach": 0,
+        "coachFloor": 0,
+        "toilet": 2,
+        "dustbin": 0
+      },
+      "statusCounts": {
+        "coachFloorStatus": {},
+        "toilet1Status": {
+          "Clean": 1
+        },
+        "toilet2Status": {
+          "Clean": 1
+        },
+        "dustbin1Status": {},
+        "dustbin2Status": {}
+      },
+      "booleanCounts": {
+        "toilet1Trash": 0,
+        "toilet2Trash": 0,
+        "toilet1WaterNA": 1,
+        "toilet2WaterNA": 1
+      },
+      "feedbacksByDate": {
+        "2026-08-24": 1
+      },
+      "coachStats": {
+        "B3": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 0,
+          "sumToiletRating": 6,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 0,
+            "toilet": 2,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Clean": 1
+            },
+            "toilet2Status": {
+              "Clean": 1
+            },
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 1,
+            "toilet2WaterNA": 1
+          },
+          "feedbacksByDate": {
+            "2026-08-24": 1
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 0,
+          "avgToiletRating": 3,
+          "avgDustbinRating": 0
+        }
+      },
+      "avgGeneralRating": 0,
+      "avgFloorRating": 0,
+      "avgToiletRating": 3,
       "avgDustbinRating": 0
     },
     "12215": {
