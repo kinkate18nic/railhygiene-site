@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-29T11:43:48.948Z",
+  "lastUpdated": "2026-08-30T10:34:32.231Z",
   "statsByTrain": {
     "10116": {
       "trainName": "MAO BDTS EXPRESS",
@@ -36565,21 +36565,22 @@
     },
     "20111": {
       "trainName": "KONKAN KANYA EXP",
-      "feedbackCount": 2,
+      "feedbackCount": 3,
       "sumGeneralRating": 0,
       "sumFloorRating": 0,
-      "sumToiletRating": 4,
+      "sumToiletRating": 7,
       "sumDustbinRating": 0,
       "ratingCounts": {
         "generalCoach": 0,
         "coachFloor": 0,
-        "toilet": 4,
+        "toilet": 5,
         "dustbin": 0
       },
       "statusCounts": {
         "coachFloorStatus": {},
         "toilet1Status": {
-          "Dirty": 2
+          "Dirty": 2,
+          "Clean": 1
         },
         "toilet2Status": {
           "Dirty": 2
@@ -36590,11 +36591,12 @@
       "booleanCounts": {
         "toilet1Trash": 0,
         "toilet2Trash": 0,
-        "toilet1WaterNA": 2,
+        "toilet1WaterNA": 3,
         "toilet2WaterNA": 2
       },
       "feedbacksByDate": {
         "2026-07-11": 1,
+        "2026-08-30": 1,
         "2026-06-20": 1
       },
       "coachStats": {
@@ -36633,6 +36635,41 @@
           "avgGeneralRating": 0,
           "avgFloorRating": 0,
           "avgToiletRating": 1,
+          "avgDustbinRating": 0
+        },
+        "S4": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 0,
+          "sumToiletRating": 3,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 0,
+            "toilet": 1,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Clean": 1
+            },
+            "toilet2Status": {},
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 1,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-08-30": 1
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 0,
+          "avgToiletRating": 3,
           "avgDustbinRating": 0
         },
         "M3": {
@@ -36675,7 +36712,7 @@
       },
       "avgGeneralRating": 0,
       "avgFloorRating": 0,
-      "avgToiletRating": 1,
+      "avgToiletRating": 1.4,
       "avgDustbinRating": 0
     },
     "20153": {
