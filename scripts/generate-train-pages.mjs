@@ -26,7 +26,8 @@ const GA4_TAG = `  <!-- Google tag (gtag.js) -->
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-6328SPQDYL');
-  </script>`;
+  </script>
+  <script defer src="/assets/analytics-events.js"></script>`;
 const MIN_TRAIN_COUNT = 3_000;
 const MAX_TRAIN_COUNT = 10_000;
 const offline = process.argv.includes("--offline");
@@ -497,7 +498,7 @@ ${GA4_TAG}
       <h1>${escapeHtml(train.number)} · ${escapeHtml(train.name)}</h1>
       <p class="route">${escapeHtml(train.src)} <span aria-hidden="true">→</span> ${escapeHtml(train.dest)}</p>
       <div class="actions">
-        <a class="button primary" href="/open?train=${train.number}">Open in RailHygiene</a>
+        <a class="button primary" href="/open?train=${train.number}" data-ga-event="open_app_click" data-ga-location="train_page_hero" data-train-number="${train.number}">Open in RailHygiene</a>
         <a class="button secondary" href="/trains/">Search another train</a>
       </div>
       <p class="notice">Community-submitted historical data. RailHygiene is independent and is not affiliated with Indian Railways or IRCTC.</p>
@@ -506,7 +507,7 @@ ${GA4_TAG}
       ${dataPanel}
       ${renderInterpretation(train, stats, feedbackCount, lastReport)}
       ${renderRelatedTrains(related)}
-      <aside class="disclaimer"><strong>Need cleaning help now?</strong> Use the official <a href="https://railmadad.indianrailways.gov.in/" rel="nofollow noopener">RailMadad service</a> or call railway helpline 139. RailHygiene records anonymous historical feedback for future passengers and does not resolve complaints.</aside>
+      <aside class="disclaimer"><strong>Need cleaning help now?</strong> Use the official <a href="https://railmadad.indianrailways.gov.in/" rel="nofollow noopener" data-ga-event="railmadad_click" data-ga-location="train_page_help" data-train-number="${train.number}">RailMadad service</a> or call railway helpline 139. RailHygiene records anonymous historical feedback for future passengers and does not resolve complaints.</aside>
     </div>
   </main>
   <footer class="site-footer">© RailHygiene · <a href="/methodology.html">Methodology</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></footer>
@@ -522,7 +523,7 @@ function renderDirectoryPage(trains, feedbackTrainNumbers, lastUpdated) {
     .map(
       (train) => `
         <li>
-          <a href="/train/${train.number}/">
+          <a href="/train/${train.number}/" data-ga-event="select_content" data-ga-location="featured_train_results" data-ga-content-type="train" data-ga-content-id="train_${train.number}" data-train-number="${train.number}">
             <strong>${escapeHtml(train.number)} · ${escapeHtml(train.name)}</strong>
             <span>${escapeHtml(train.src)} → ${escapeHtml(train.dest)}</span>
           </a>
@@ -603,6 +604,11 @@ ${GA4_TAG}
         const title = document.createElement("strong");
         const route = document.createElement("span");
         link.href = "/train/" + encodeURIComponent(train.number) + "/";
+        link.dataset.gaEvent = "select_content";
+        link.dataset.gaLocation = "train_search_results";
+        link.dataset.gaContentType = "train";
+        link.dataset.gaContentId = "train_" + String(train.number || "");
+        link.dataset.trainNumber = String(train.number || "");
         title.textContent = String(train.number || "") + " · " + String(train.name || "");
         route.textContent = String(train.src || "") + " → " + String(train.dest || "");
         link.append(title, route);
@@ -628,8 +634,12 @@ ${GA4_TAG}
         status.textContent = "Live search is temporarily unavailable. Please try again later.";
       });
 
+    let searchTimer;
+    let lastTrackedQuery = "";
+
     input.addEventListener("input", () => {
       const query = input.value.trim().toLowerCase();
+      window.clearTimeout(searchTimer);
       if (!query) {
         status.textContent = "Enter a train number or name.";
         results.replaceChildren();
@@ -643,6 +653,16 @@ ${GA4_TAG}
         ? "Found " + matches.length + " matching " + (matches.length === 1 ? "train." : "trains.")
         : "No matching train found.";
       render(matches);
+
+      searchTimer = window.setTimeout(() => {
+        if (query === lastTrackedQuery) return;
+        lastTrackedQuery = query;
+        window.rhTrack?.("search", {
+          search_term: query,
+          search_location: "train_directory",
+          search_results_count: matches.length,
+        });
+      }, 800);
     });
   </script>
 </body>

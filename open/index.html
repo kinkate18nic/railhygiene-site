@@ -9,6 +9,7 @@
     gtag('js', new Date());
     gtag('config', 'G-6328SPQDYL');
   </script>
+  <script defer src="/assets/analytics-events.js"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex,follow">
@@ -107,8 +108,8 @@
     <h1 id="title">Open train ratings</h1>
     <p id="description">Continue in RailHygiene to view available coach hygiene reports.</p>
     <div class="actions">
-      <a id="open-app" class="primary" href="intent://railhygiene.in/open#Intent;scheme=https;package=com.nish.railhygiene;end">Open RailHygiene</a>
-      <a class="secondary" href="https://play.google.com/store/apps/details?id=com.nish.railhygiene&amp;referrer=utm_source%3Drailhygiene_app_link%26utm_medium%3Dwebsite%26utm_campaign%3Dapp_link_fallback">Get the Android app</a>
+      <a id="open-app" class="primary" href="intent://railhygiene.in/open#Intent;scheme=https;package=com.nish.railhygiene;end" data-ga-event="open_app_click" data-ga-location="app_link_page">Open RailHygiene</a>
+      <a class="secondary" href="https://play.google.com/store/apps/details?id=com.nish.railhygiene&amp;referrer=utm_source%3Drailhygiene_app_link%26utm_medium%3Dwebsite%26utm_campaign%3Dapp_link_fallback" data-ga-event="play_store_click" data-ga-location="app_link_fallback">Get the Android app</a>
     </div>
     <p class="note">RailHygiene is an independent community platform.</p>
   </main>
@@ -120,6 +121,7 @@
 
     if (isValidTrain) {
       target.searchParams.set("train", train);
+      document.getElementById("open-app").dataset.trainNumber = train;
       document.getElementById("title").textContent = `Open ratings for train ${train}`;
       document.getElementById("description").textContent =
         "Continue in RailHygiene to view available coach hygiene reports for this train.";
