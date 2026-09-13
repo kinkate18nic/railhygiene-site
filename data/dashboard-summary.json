@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-11T09:53:13.979Z",
+  "lastUpdated": "2026-09-12T09:29:05.514Z",
   "statsByTrain": {
     "10116": {
       "trainName": "MAO BDTS EXPRESS",
@@ -4818,15 +4818,15 @@
     },
     "12204": {
       "trainName": "SHC GARIB RATH",
-      "feedbackCount": 3,
+      "feedbackCount": 4,
       "sumGeneralRating": 4,
       "sumFloorRating": 7,
-      "sumToiletRating": 10,
+      "sumToiletRating": 13,
       "sumDustbinRating": 16,
       "ratingCounts": {
         "generalCoach": 2,
         "coachFloor": 3,
-        "toilet": 6,
+        "toilet": 7,
         "dustbin": 4
       },
       "statusCounts": {
@@ -4835,7 +4835,8 @@
           "Dirty": 1
         },
         "toilet1Status": {
-          "Dirty": 3
+          "Dirty": 3,
+          "Clean": 1
         },
         "toilet2Status": {
           "Dirty": 3
@@ -4850,12 +4851,13 @@
       "booleanCounts": {
         "toilet1Trash": 0,
         "toilet2Trash": 0,
-        "toilet1WaterNA": 1,
+        "toilet1WaterNA": 2,
         "toilet2WaterNA": 1
       },
       "feedbacksByDate": {
         "2026-04-30": 2,
-        "2026-07-19": 1
+        "2026-07-19": 1,
+        "2026-09-12": 1
       },
       "coachStats": {
         "G11": {
@@ -4939,11 +4941,46 @@
           "avgFloorRating": 1,
           "avgToiletRating": 1,
           "avgDustbinRating": 0
+        },
+        "G10": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 0,
+          "sumToiletRating": 3,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 0,
+            "toilet": 1,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Clean": 1
+            },
+            "toilet2Status": {},
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 1,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-09-12": 1
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 0,
+          "avgToiletRating": 3,
+          "avgDustbinRating": 0
         }
       },
       "avgGeneralRating": 2,
       "avgFloorRating": 2.3333333333333335,
-      "avgToiletRating": 1.6666666666666667,
+      "avgToiletRating": 1.8571428571428572,
       "avgDustbinRating": 4
     },
     "12208": {
@@ -5535,6 +5572,79 @@
       "avgGeneralRating": 2,
       "avgFloorRating": 0,
       "avgToiletRating": 0,
+      "avgDustbinRating": 0
+    },
+    "12247": {
+      "trainName": "BDTS NZM YUVA EX",
+      "feedbackCount": 1,
+      "sumGeneralRating": 0,
+      "sumFloorRating": 0,
+      "sumToiletRating": 2,
+      "sumDustbinRating": 0,
+      "ratingCounts": {
+        "generalCoach": 0,
+        "coachFloor": 0,
+        "toilet": 1,
+        "dustbin": 0
+      },
+      "statusCounts": {
+        "coachFloorStatus": {},
+        "toilet1Status": {
+          "Dirty": 1
+        },
+        "toilet2Status": {},
+        "dustbin1Status": {},
+        "dustbin2Status": {}
+      },
+      "booleanCounts": {
+        "toilet1Trash": 0,
+        "toilet2Trash": 0,
+        "toilet1WaterNA": 0,
+        "toilet2WaterNA": 0
+      },
+      "feedbacksByDate": {
+        "2026-09-11": 1
+      },
+      "coachStats": {
+        "M3": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 0,
+          "sumToiletRating": 2,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 0,
+            "toilet": 1,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Dirty": 1
+            },
+            "toilet2Status": {},
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 0,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-09-11": 1
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 0,
+          "avgToiletRating": 2,
+          "avgDustbinRating": 0
+        }
+      },
+      "avgGeneralRating": 0,
+      "avgFloorRating": 0,
+      "avgToiletRating": 2,
       "avgDustbinRating": 0
     },
     "12250": {
@@ -35292,23 +35402,25 @@
     },
     "19020": {
       "trainName": "HW BDTS EXP",
-      "feedbackCount": 2,
+      "feedbackCount": 3,
       "sumGeneralRating": 0,
       "sumFloorRating": 0,
-      "sumToiletRating": 2,
+      "sumToiletRating": 4,
       "sumDustbinRating": 0,
       "ratingCounts": {
         "generalCoach": 0,
         "coachFloor": 0,
-        "toilet": 2,
+        "toilet": 4,
         "dustbin": 0
       },
       "statusCounts": {
         "coachFloorStatus": {},
         "toilet1Status": {
-          "Dirty": 2
+          "Dirty": 3
         },
-        "toilet2Status": {},
+        "toilet2Status": {
+          "Dirty": 1
+        },
         "dustbin1Status": {},
         "dustbin2Status": {}
       },
@@ -35319,7 +35431,8 @@
         "toilet2WaterNA": 0
       },
       "feedbacksByDate": {
-        "2026-07-15": 2
+        "2026-07-15": 2,
+        "2026-09-13": 1
       },
       "coachStats": {
         "B3": {
@@ -35351,6 +35464,43 @@
           },
           "feedbacksByDate": {
             "2026-07-15": 2
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 0,
+          "avgToiletRating": 1,
+          "avgDustbinRating": 0
+        },
+        "S2": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 0,
+          "sumToiletRating": 2,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 0,
+            "toilet": 2,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Dirty": 1
+            },
+            "toilet2Status": {
+              "Dirty": 1
+            },
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 0,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-09-13": 1
           },
           "avgGeneralRating": 0,
           "avgFloorRating": 0,
