@@ -1128,6 +1128,18 @@
     "dest": "Ksr Bengaluru"
   },
   {
+    "number": "06547",
+    "name": "SMVB TVCN SPL",
+    "src": "SMVT BENGALURU",
+    "dest": "THIRUVANANTHAPURAM NORTH"
+  },
+  {
+    "number": "06548",
+    "name": "TVCN SMVB SPL",
+    "src": "THIRUVANANTHAPURAM NORTH",
+    "dest": "SMVT BENGALURU"
+  },
+  {
     "number": "06577",
     "name": "YPR BJP SPL",
     "src": "Yasvantpur Jn",
