@@ -474,6 +474,12 @@
     "dest": "Malda Town"
   },
   {
+    "number": "03640",
+    "name": "SSB DHN SPL",
+    "src": "SHAKURBASTI",
+    "dest": "DHANBAD JN"
+  },
+  {
     "number": "03679",
     "name": "GAYA CBE SPL",
     "src": "Gaya",
@@ -760,6 +766,12 @@
     "name": "KHAIRTHAL - ALWAR JN SPECIAL",
     "src": "Khairthal",
     "dest": "Alwar Jn"
+  },
+  {
+    "number": "04811",
+    "name": "BME HW SPL",
+    "src": "BARMER",
+    "dest": "HARIDWAR"
   },
   {
     "number": "04851",
@@ -1138,6 +1150,12 @@
     "name": "TVCN SMVB SPL",
     "src": "THIRUVANANTHAPURAM NORTH",
     "dest": "SMVT BENGALURU"
+  },
+  {
+    "number": "06575",
+    "name": "SMVB TVCN SPL",
+    "src": "SMVT BENGALURU",
+    "dest": "THIRUVANANTHAPURAM NORTH"
   },
   {
     "number": "06577",
@@ -1530,6 +1548,12 @@
     "dest": "Bhiwani"
   },
   {
+    "number": "09005",
+    "name": "BDTS BNW SF SPL",
+    "src": "BANDRA",
+    "dest": "BHIWANI"
+  },
+  {
     "number": "09009",
     "name": "BDTS BHUJ SF SPL",
     "src": "Bandra Terminus",
@@ -1552,6 +1576,12 @@
     "name": "BHUJ BDTS SF SPL",
     "src": "Bhuj",
     "dest": "Bandra Terminus"
+  },
+  {
+    "number": "09047",
+    "name": "UDN JJP SPL",
+    "src": "UDHNA Jn (SURAT)",
+    "dest": "JHANJHARPUR Jn"
   },
   {
     "number": "09048",
@@ -12978,6 +13008,12 @@
     "dest": "Guwahati"
   },
   {
+    "number": "15676",
+    "name": "GHY NJP IC EXP",
+    "src": "GUWAHATI",
+    "dest": "NEW JALPAIGURI"
+  },
+  {
     "number": "15703",
     "name": "NJP-BNGN EXP",
     "src": "New Jalpaiguri",
@@ -14718,6 +14754,12 @@
     "dest": "KSR Bengaluru"
   },
   {
+    "number": "16602",
+    "name": "AMRIT BHARAT",
+    "src": "JOGBANI",
+    "dest": "ERODE Jn"
+  },
+  {
     "number": "16603",
     "name": "MAVELI EXP",
     "src": "Mangaluru Central",
@@ -16126,6 +16168,12 @@
     "name": "KRNT-KCG EXP",
     "src": "Kurnool City",
     "dest": "Kacheguda"
+  },
+  {
+    "number": "17438",
+    "name": "PVR TIRUPATI EXP",
+    "src": "PANDHARPUR",
+    "dest": "TIRUPATI"
   },
   {
     "number": "17479",
@@ -19410,6 +19458,12 @@
     "dest": "Mumbai CST"
   },
   {
+    "number": "20151",
+    "name": "HDP REWA SFAST",
+    "src": "HADAPSAR",
+    "dest": "REWA"
+  },
+  {
     "number": "20153",
     "name": "CSMT REWA SF",
     "src": "CSMT",
@@ -19546,6 +19600,12 @@
     "name": "MAHAKAL SUP EXP",
     "src": "Indore",
     "dest": "Varanasi"
+  },
+  {
+    "number": "20424",
+    "name": "PATALKOT EXP",
+    "src": "FIROZPUR CANT",
+    "dest": "SEONI"
   },
   {
     "number": "20433",
