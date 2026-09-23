@@ -89,6 +89,23 @@ function truncate(value, maxLength) {
   return `${text.slice(0, Math.max(0, maxLength - 1)).trimEnd()}…`;
 }
 
+function formatTimestamp(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value ?? "").trim();
+
+  return `${new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  })
+    .format(date)
+    .replace(/\b(am|pm)\b/gi, (period) => period.toUpperCase())} IST`;
+}
+
 function normalizeTrain(raw) {
   return {
     number: String(raw?.number ?? "").trim(),
@@ -516,6 +533,7 @@ ${GA4_TAG}
 }
 
 function renderDirectoryPage(trains, feedbackTrainNumbers, lastUpdated) {
+  const formattedLastUpdated = formatTimestamp(lastUpdated);
   const featured = trains
     .filter((train) => feedbackTrainNumbers.has(train.number))
     .slice(0, 100);
@@ -565,7 +583,7 @@ ${GA4_TAG}
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script type="application/ld+json">${safeJson(directorySchema)}</script>
   <style>
-    :root{font-family:"Outfit",system-ui,sans-serif;color:#102a43;background:#f6f9fc;--blue:#0067a8;--line:#d8e2ec;--muted:#52677b}*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:1px solid var(--line)}nav,main{width:min(980px,calc(100% - 32px));margin:auto}.top{min-height:72px;display:flex;align-items:center;justify-content:space-between}.brand{min-height:44px;display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;font-size:1.2rem;font-weight:700}.brand img{width:40px;height:40px;border-radius:10px}.back{min-width:44px;min-height:44px;padding:0 4px;display:inline-flex;align-items:center;justify-content:center;color:var(--blue);font-weight:600;text-decoration:none}.hero{padding:64px 0 30px}.hero h1{margin:0;font-size:clamp(2.2rem,7vw,4rem);line-height:1}.hero p{max-width:680px;color:var(--muted);font-size:1.08rem;line-height:1.65}.search{position:relative;margin:24px 0}.search label{display:block;margin-bottom:8px;font-weight:600}.search input{width:100%;min-height:60px;padding:0 20px;border:2px solid #9db2c5;border-radius:16px;background:#fff;font:inherit;font-size:1.08rem}.search input:focus{outline:3px solid #bde3ff;border-color:var(--blue)}.status{min-height:24px;color:var(--muted)}ul{list-style:none;margin:20px 0 60px;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}li a{display:block;min-height:44px;padding:18px;border:1px solid var(--line);border-radius:16px;background:#fff;color:inherit;text-decoration:none}li a:hover{border-color:#67add7;box-shadow:0 8px 20px rgba(16,42,67,.07)}a:focus-visible{outline:3px solid #93c5fd;outline-offset:3px}li strong,li span{display:block}li span{margin-top:6px;color:var(--muted);font-size:.92rem}.empty{grid-column:1/-1;padding:30px;text-align:center;color:var(--muted)}footer{padding:28px;text-align:center;background:#fff;border-top:1px solid var(--line);color:var(--muted)}@media(max-width:650px){ul{grid-template-columns:1fr}.hero{padding-top:44px}}
+    :root{font-family:"Outfit",system-ui,sans-serif;color:#102a43;background:#f6f9fc;--blue:#0067a8;--line:#d8e2ec;--muted:#52677b}*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:1px solid var(--line)}nav,main{width:min(980px,calc(100% - 32px));margin:auto}.top{min-height:72px;display:flex;align-items:center;justify-content:space-between}.brand{min-height:44px;display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;font-size:1.2rem;font-weight:700}.brand img{width:40px;height:40px;border-radius:10px}.back{min-width:44px;min-height:44px;padding:0 4px;display:inline-flex;align-items:center;justify-content:center;color:var(--blue);font-weight:600;text-decoration:none}.hero{padding:64px 0 30px}.hero h1{margin:0;font-size:clamp(2.2rem,7vw,4rem);line-height:1}.freshness{display:flex;align-items:flex-start;gap:8px;margin:12px 0 0;color:var(--muted);font-size:.9rem;line-height:1.4}.freshness:before{content:"";width:7px;height:7px;flex:0 0 7px;margin-top:.42em;border-radius:50%;background:#2f855a}.hero>p:not(.freshness){max-width:680px;color:var(--muted);font-size:1.08rem;line-height:1.65}.search{position:relative;margin:24px 0}.search label{display:block;margin-bottom:8px;font-weight:600}.search input{width:100%;min-height:60px;padding:0 20px;border:2px solid #9db2c5;border-radius:16px;background:#fff;font:inherit;font-size:1.08rem}.search input:focus{outline:3px solid #bde3ff;border-color:var(--blue)}.status{min-height:24px;color:var(--muted)}ul{list-style:none;margin:20px 0 60px;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}li a{display:block;min-height:44px;padding:18px;border:1px solid var(--line);border-radius:16px;background:#fff;color:inherit;text-decoration:none}li a:hover{border-color:#67add7;box-shadow:0 8px 20px rgba(16,42,67,.07)}a:focus-visible{outline:3px solid #93c5fd;outline-offset:3px}li strong,li span{display:block}li span{margin-top:6px;color:var(--muted);font-size:.92rem}.empty{grid-column:1/-1;padding:30px;text-align:center;color:var(--muted)}footer{padding:28px;text-align:center;background:#fff;border-top:1px solid var(--line);color:var(--muted)}@media(max-width:650px){ul{grid-template-columns:1fr}.hero{padding-top:44px}}
   </style>
 </head>
 <body>
@@ -573,6 +591,7 @@ ${GA4_TAG}
   <main>
     <section class="hero">
       <h1>Find your train</h1>
+      <p class="freshness"><span>Community ratings refreshed <time datetime="${escapeHtml(lastUpdated)}">${escapeHtml(formattedLastUpdated)}</time></span></p>
       <p>Search ${trains.length.toLocaleString("en-IN")} maintained Indian Railways services. Trains with community reports include coach, floor, toilet and dustbin cleanliness details.</p>
       <div class="search"><label for="train-search">Train number or name</label><input id="train-search" type="search" inputmode="search" autocomplete="off" placeholder="Try 16526 or train name"></div>
       <p id="status" class="status" aria-live="polite">Showing trains with available community reports.</p>
