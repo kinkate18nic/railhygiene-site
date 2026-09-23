@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-22T10:09:22.342Z",
+  "lastUpdated": "2026-09-23T09:43:27.056Z",
   "statsByTrain": {
     "10116": {
       "trainName": "MAO BDTS EXPRESS",
@@ -40896,34 +40896,43 @@
     },
     "20806": {
       "trainName": "AP EXPRESS",
-      "feedbackCount": 1,
-      "sumGeneralRating": 0,
-      "sumFloorRating": 0,
-      "sumToiletRating": 2,
-      "sumDustbinRating": 0,
+      "feedbackCount": 2,
+      "sumGeneralRating": 2,
+      "sumFloorRating": 2,
+      "sumToiletRating": 6,
+      "sumDustbinRating": 4,
       "ratingCounts": {
-        "generalCoach": 0,
-        "coachFloor": 0,
-        "toilet": 1,
-        "dustbin": 0
+        "generalCoach": 1,
+        "coachFloor": 1,
+        "toilet": 3,
+        "dustbin": 2
       },
       "statusCounts": {
-        "coachFloorStatus": {},
-        "toilet1Status": {
+        "coachFloorStatus": {
           "Dirty": 1
         },
-        "toilet2Status": {},
-        "dustbin1Status": {},
-        "dustbin2Status": {}
+        "toilet1Status": {
+          "Dirty": 2
+        },
+        "toilet2Status": {
+          "Dirty": 1
+        },
+        "dustbin1Status": {
+          "Unusable": 1
+        },
+        "dustbin2Status": {
+          "Unusable": 1
+        }
       },
       "booleanCounts": {
-        "toilet1Trash": 0,
-        "toilet2Trash": 0,
-        "toilet1WaterNA": 0,
-        "toilet2WaterNA": 0
+        "toilet1Trash": 1,
+        "toilet2Trash": 1,
+        "toilet1WaterNA": 1,
+        "toilet2WaterNA": 1
       },
       "feedbacksByDate": {
-        "2026-08-07": 1
+        "2026-08-07": 1,
+        "2026-09-20": 1
       },
       "coachStats": {
         "A1": {
@@ -40960,12 +40969,55 @@
           "avgFloorRating": 0,
           "avgToiletRating": 2,
           "avgDustbinRating": 0
+        },
+        "B4": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 2,
+          "sumFloorRating": 2,
+          "sumToiletRating": 4,
+          "sumDustbinRating": 4,
+          "ratingCounts": {
+            "generalCoach": 1,
+            "coachFloor": 1,
+            "toilet": 2,
+            "dustbin": 2
+          },
+          "statusCounts": {
+            "coachFloorStatus": {
+              "Dirty": 1
+            },
+            "toilet1Status": {
+              "Dirty": 1
+            },
+            "toilet2Status": {
+              "Dirty": 1
+            },
+            "dustbin1Status": {
+              "Unusable": 1
+            },
+            "dustbin2Status": {
+              "Unusable": 1
+            }
+          },
+          "booleanCounts": {
+            "toilet1Trash": 1,
+            "toilet2Trash": 1,
+            "toilet1WaterNA": 1,
+            "toilet2WaterNA": 1
+          },
+          "feedbacksByDate": {
+            "2026-09-20": 1
+          },
+          "avgGeneralRating": 2,
+          "avgFloorRating": 2,
+          "avgToiletRating": 2,
+          "avgDustbinRating": 2
         }
       },
-      "avgGeneralRating": 0,
-      "avgFloorRating": 0,
+      "avgGeneralRating": 2,
+      "avgFloorRating": 2,
       "avgToiletRating": 2,
-      "avgDustbinRating": 0
+      "avgDustbinRating": 2
     },
     "20808": {
       "trainName": "HIRAKUND EXP",
