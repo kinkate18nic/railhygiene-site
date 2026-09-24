@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-23T09:43:27.056Z",
+  "lastUpdated": "2026-09-24T07:37:39.043Z",
   "statsByTrain": {
     "10116": {
       "trainName": "MAO BDTS EXPRESS",
@@ -20785,21 +20785,21 @@
     },
     "13333": {
       "trainName": "DUMK PNBE EXP",
-      "feedbackCount": 3,
+      "feedbackCount": 4,
       "sumGeneralRating": 1,
       "sumFloorRating": 0,
-      "sumToiletRating": 6,
+      "sumToiletRating": 8,
       "sumDustbinRating": 0,
       "ratingCounts": {
         "generalCoach": 1,
         "coachFloor": 0,
-        "toilet": 4,
+        "toilet": 5,
         "dustbin": 0
       },
       "statusCounts": {
         "coachFloorStatus": {},
         "toilet1Status": {
-          "Dirty": 2
+          "Dirty": 3
         },
         "toilet2Status": {
           "Dirty": 2
@@ -20815,6 +20815,7 @@
       },
       "feedbacksByDate": {
         "2026-08-22": 1,
+        "2026-09-23": 1,
         "2026-05-29": 1,
         "2026-07-19": 1
       },
@@ -20850,6 +20851,41 @@
           },
           "feedbacksByDate": {
             "2026-08-22": 1
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 0,
+          "avgToiletRating": 2,
+          "avgDustbinRating": 0
+        },
+        "A2": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 0,
+          "sumToiletRating": 2,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 0,
+            "toilet": 1,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Dirty": 1
+            },
+            "toilet2Status": {},
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 0,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-09-23": 1
           },
           "avgGeneralRating": 0,
           "avgFloorRating": 0,
@@ -20929,7 +20965,7 @@
       },
       "avgGeneralRating": 1,
       "avgFloorRating": 0,
-      "avgToiletRating": 1.5,
+      "avgToiletRating": 1.6,
       "avgDustbinRating": 0
     },
     "13348": {
