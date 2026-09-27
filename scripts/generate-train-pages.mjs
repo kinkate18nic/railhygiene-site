@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { reportDates, trainPageQuality } from "./train-page-quality.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DATA_DIR = path.join(ROOT, "data");
@@ -75,12 +76,6 @@ function hasReportedRating(stats, component, value) {
   const count = stats?.ratingCounts?.[component];
   if (typeof count === "number") return count > 0;
   return clampRating(value) > 0;
-}
-
-function formatScopedRating(stats, component, value) {
-  return hasReportedRating(stats, component, value)
-    ? formatRating(value)
-    : "N/A";
 }
 
 function truncate(value, maxLength) {
@@ -259,10 +254,23 @@ async function loadSummary() {
 }
 
 function latestFeedbackDate(stats, fallback) {
-  const dates = Object.keys(stats?.feedbacksByDate || {}).filter((date) =>
-    /^\d{4}-\d{2}-\d{2}$/.test(date),
-  );
-  return dates.sort().at(-1) || fallback.slice(0, 10);
+  return reportDates(stats).at(-1) || String(fallback || "").slice(0, 10) || null;
+}
+
+function formatReportDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ""))) return "Unknown date";
+  return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "UTC",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(`${value}T00:00:00Z`));
+}
+
+function naturalJoin(values) {
+  if (values.length <= 1) return values[0] || "";
+  if (values.length === 2) return `${values[0]} and ${values[1]}`;
+  return `${values.slice(0, -1).join(", ")}, and ${values.at(-1)}`;
 }
 
 function coachEntries(stats) {
@@ -275,40 +283,132 @@ function ratingMeter(label, value, stats, component) {
   const hasRating = hasReportedRating(stats, component, value);
   const rating = hasRating ? `${formatRating(value)}/5` : "Not rated";
   const percentage = hasRating ? `${(clampRating(value) / 5) * 100}%` : "0%";
+  const count = Number(stats?.ratingCounts?.[component] || 0);
   return `
     <div class="rating-row">
       <span>${escapeHtml(label)}</span>
       <div class="meter" aria-hidden="true"><span style="width:${percentage}"></span></div>
-      <strong>${rating}</strong>
+      <div class="rating-value"><strong>${rating}</strong><span>${count} ${count === 1 ? "rating" : "ratings"}</span></div>
     </div>`;
 }
 
-function ratingLabel(value) {
-  const rating = clampRating(value);
-  if (rating >= 4) return "rated highly";
-  if (rating >= 3) return "rated mixed to good";
-  if (rating > 0) return "rated below average";
-  return "not yet rated";
+const RATING_CATEGORIES = [
+  ["generalCoach", "overall coach"],
+  ["coachFloor", "coach floor"],
+  ["toilet", "toilets"],
+  ["dustbin", "dustbins"],
+];
+const MISSING_DATA_LABELS = {
+  generalCoach: "the overall coach condition",
+  coachFloor: "the coach floor",
+  toilet: "toilets",
+  dustbin: "dustbins",
+};
+
+function ratedCategoryLabels(stats) {
+  return RATING_CATEGORIES.filter(
+    ([component]) => Number(stats?.ratingCounts?.[component] || 0) > 0,
+  ).map(([, label]) => label);
 }
 
-function renderInterpretation(train, stats, feedbackCount, lastReport) {
+function mergeStatusCounts(stats, keys) {
+  const merged = new Map();
+  for (const key of keys) {
+    for (const [status, rawCount] of Object.entries(
+      stats?.statusCounts?.[key] || {},
+    )) {
+      const count = Number(rawCount || 0);
+      if (count > 0) merged.set(status, (merged.get(status) || 0) + count);
+    }
+  }
+  return [...merged.entries()].sort(
+    ([statusA, countA], [statusB, countB]) =>
+      countB - countA || statusA.localeCompare(statusB),
+  );
+}
+
+function statusTotal(entries) {
+  return entries.reduce((total, [, count]) => total + count, 0);
+}
+
+function renderConditionCounts(stats) {
+  const groups = [
+    ["Coach floor", ["coachFloorStatus"]],
+    ["Toilets", ["toilet1Status", "toilet2Status"]],
+    ["Dustbins", ["dustbin1Status", "dustbin2Status"]],
+  ]
+    .map(([label, keys]) => [label, mergeStatusCounts(stats, keys)])
+    .filter(([, entries]) => entries.length);
+  const noWater =
+    Number(stats?.booleanCounts?.toilet1WaterNA || 0) +
+    Number(stats?.booleanCounts?.toilet2WaterNA || 0);
+  const trashOverflow =
+    Number(stats?.booleanCounts?.toilet1Trash || 0) +
+    Number(stats?.booleanCounts?.toilet2Trash || 0);
+
+  if (!groups.length && !noWater && !trashOverflow) return "";
+
+  const conditionCards = groups
+    .map(([label, entries]) => {
+      const total = statusTotal(entries);
+      const counts = entries
+        .map(([status, count]) => `${count} ${escapeHtml(status.toLowerCase())}`)
+        .join(" · ");
+      return `
+        <article class="condition-card">
+          <h3>${escapeHtml(label)}</h3>
+          <p class="condition-values">${counts}</p>
+          <p>${total} recorded condition ${total === 1 ? "observation" : "observations"}</p>
+        </article>`;
+    })
+    .join("");
+  const issueItems = [
+    noWater > 0
+      ? `<li><strong>${noWater}</strong> ${noWater === 1 ? "observation flagged" : "observations flagged"} water as unavailable.</li>`
+      : "",
+    trashOverflow > 0
+      ? `<li><strong>${trashOverflow}</strong> ${trashOverflow === 1 ? "observation flagged" : "observations flagged"} overflowing trash.</li>`
+      : "",
+  ]
+    .filter(Boolean)
+    .join("");
+
+  return `
+    <section class="panel" aria-labelledby="conditions-heading">
+      <h2 id="conditions-heading">What was recorded onboard</h2>
+      <p class="section-intro">Counts are shown as observations, not percentages, so small samples are not made to look more conclusive than they are.</p>
+      ${conditionCards ? `<div class="condition-grid">${conditionCards}</div>` : ""}
+      ${issueItems ? `<ul class="issue-list">${issueItems}</ul>` : ""}
+    </section>`;
+}
+
+function renderInterpretation(train, stats, quality, lastReport) {
+  const { feedbackCount, coachCount, dateCount, ratedCategoryCount } = quality;
   if (!feedbackCount) return "";
+  const categoryLabels = ratedCategoryLabels(stats);
+  const categorySummary = categoryLabels.length
+    ? `The recorded ratings cover ${naturalJoin(categoryLabels)}.`
+    : "This report does not contain a numeric cleanliness rating.";
   const sampleNote =
     feedbackCount === 1
-      ? "This result comes from one passenger report, so treat it as an early signal rather than a reliable prediction."
-      : feedbackCount < 5
-        ? `This is still a small sample of ${feedbackCount} reports. Conditions can differ by coach, date and cleaning cycle.`
-        : `This summary combines ${feedbackCount} passenger reports, but conditions can still vary by coach, date and cleaning cycle.`;
+      ? "This is one passenger report, so treat it as an early signal rather than a prediction of another journey."
+    : feedbackCount < 5
+      ? `This is still a small sample of ${feedbackCount} reports. Conditions can differ by coach, date and cleaning cycle.`
+      : `This summary combines ${feedbackCount} passenger reports. Conditions can still differ by coach, date and cleaning cycle.`;
   return `
     <section class="panel" aria-labelledby="interpretation-heading">
-      <p class="eyebrow">What the data means</p>
-      <h2 id="interpretation-heading">How to read these ${escapeHtml(train.number)} ratings</h2>
-      <p>Passengers have ${ratingLabel(stats.avgGeneralRating)} the overall coach condition, while the floor is ${ratingLabel(stats.avgFloorRating)} and the toilets are ${ratingLabel(stats.avgToiletRating)}. These are historical community observations for ${escapeHtml(train.name)} between ${escapeHtml(train.src)} and ${escapeHtml(train.dest)}; they are not a live inspection or a guarantee of today’s condition.</p>
-      <p><strong>Sample-size note:</strong> ${sampleNote} The latest journey represented in this snapshot is dated <time datetime="${lastReport}">${escapeHtml(lastReport)}</time>.</p>
-      <p>Use this page to understand past passenger experience. If you are currently travelling and need cleaning or official assistance, use <a href="/how-to-report-train-cleanliness.html">RailMadad or railway helpline 139</a>. After the journey, adding an anonymous rating in RailHygiene makes this estimate more useful for the next passenger.</p>
-      <p>The four category scores answer different questions: overall coach covers the general condition, floor focuses on the coach floor, toilets cover the reported washroom areas, and dustbins reflect availability and usability where passengers supplied that detail. Compare categories instead of treating one average as the complete story.</p>
+      <h2 id="interpretation-heading">${escapeHtml(train.number)} ${escapeHtml(train.name)}: what passengers reported</h2>
+      <p>RailHygiene currently has ${feedbackCount === 1 ? "one community report" : `${feedbackCount} community reports`} for this ${escapeHtml(train.src)} to ${escapeHtml(train.dest)} service, covering ${coachCount || "no identified"} ${coachCount === 1 ? "coach" : "coaches"} across ${dateCount || "no recorded"} journey ${dateCount === 1 ? "date" : "dates"}. ${categorySummary}</p>
+      <p><strong>Sample-size note:</strong> ${sampleNote} ${lastReport ? `The latest recorded journey is <time datetime="${lastReport}">${escapeHtml(formatReportDate(lastReport))}</time>.` : "No valid journey date is available."}</p>
+      <p>These are historical community observations, not a live inspection or a guarantee of the train’s present condition. Category averages use only the ${ratedCategoryCount} ${ratedCategoryCount === 1 ? "category" : "categories"} for which passengers supplied ratings.</p>
       <p><a href="/methodology.html">Read how RailHygiene collects, aggregates and limits its cleanliness data.</a></p>
     </section>`;
+}
+
+function formatCoachRating(stats, component, value) {
+  const count = Number(stats?.ratingCounts?.[component] || 0);
+  if (!count) return '<span class="not-rated">Not rated</span>';
+  return `<span class="table-rating"><strong>${formatRating(value)}/5</strong><small>${count} ${count === 1 ? "rating" : "ratings"}</small></span>`;
 }
 
 function renderCoachTable(stats) {
@@ -321,9 +421,11 @@ function renderCoachTable(stats) {
         <tr>
           <th scope="row">${escapeHtml(coach)}</th>
           <td>${Number(values.feedbackCount || 0)}</td>
-          <td>${formatScopedRating(values, "generalCoach", values.avgGeneralRating)}</td>
-          <td>${formatScopedRating(values, "coachFloor", values.avgFloorRating)}</td>
-          <td>${formatScopedRating(values, "toilet", values.avgToiletRating)}</td>
+          <td>${formatCoachRating(values, "generalCoach", values.avgGeneralRating)}</td>
+          <td>${formatCoachRating(values, "coachFloor", values.avgFloorRating)}</td>
+          <td>${formatCoachRating(values, "toilet", values.avgToiletRating)}</td>
+          <td>${formatCoachRating(values, "dustbin", values.avgDustbinRating)}</td>
+          <td>${latestFeedbackDate(values, null) ? `<time datetime="${latestFeedbackDate(values, null)}">${escapeHtml(formatReportDate(latestFeedbackDate(values, null)))}</time>` : "—"}</td>
         </tr>`,
     )
     .join("");
@@ -336,8 +438,10 @@ function renderCoachTable(stats) {
           <h2 id="coach-heading">Reported coach cleanliness</h2>
         </div>
       </div>
-      <div class="table-wrap">
-        <table>
+      <p class="section-intro" id="coach-note">“Not rated” means that the report identified the coach but did not score that category.</p>
+      <div class="table-wrap" tabindex="0">
+        <table aria-describedby="coach-note">
+          <caption class="sr-only">Coach-level cleanliness ratings and report dates</caption>
           <thead>
             <tr>
               <th>Coach</th>
@@ -345,6 +449,8 @@ function renderCoachTable(stats) {
               <th>Overall</th>
               <th>Floor</th>
               <th>Toilets</th>
+              <th>Dustbins</th>
+              <th>Latest report</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -353,11 +459,118 @@ function renderCoachTable(stats) {
     </section>`;
 }
 
+function coverageLabel(quality) {
+  if (quality.feedbackCount === 1 || quality.ratedCategoryCount <= 1) {
+    return ["Limited coverage", "limited"];
+  }
+  if (quality.feedbackCount < 5 || quality.ratedCategoryCount < 4) {
+    return ["Developing coverage", "developing"];
+  }
+  return ["Broader coverage", "broader"];
+}
+
+function renderCoverage(stats, quality) {
+  const [label, className] = coverageLabel(quality);
+  const categoryLabels = ratedCategoryLabels(stats);
+  const categoryText = categoryLabels.length
+    ? naturalJoin(categoryLabels)
+    : "no numerically rated category";
+  return `
+    <section class="panel" aria-labelledby="coverage-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="coverage-heading">How much data is available</h2>
+        </div>
+        <span class="coverage-badge ${className}">${label}</span>
+      </div>
+      <div class="coverage-grid">
+        <div><strong>${quality.feedbackCount}</strong><span>${quality.feedbackCount === 1 ? "community report" : "community reports"}</span></div>
+        <div><strong>${quality.coachCount}</strong><span>${quality.coachCount === 1 ? "coach represented" : "coaches represented"}</span></div>
+        <div><strong>${quality.ratedCategoryCount}/4</strong><span>categories rated</span></div>
+        <div><strong>${quality.ratingObservationCount}</strong><span>${quality.ratingObservationCount === 1 ? "rating observation" : "rating observations"}</span></div>
+      </div>
+      <p class="coverage-note">Available numeric ratings cover ${escapeHtml(categoryText)}. A larger number of reports, journey dates and coaches makes a page more representative, but it still does not describe every journey.</p>
+    </section>`;
+}
+
+function renderReportActivity(stats) {
+  const entries = reportDates(stats)
+    .map((date) => [date, Number(stats?.feedbacksByDate?.[date] || 0)])
+    .filter(([, count]) => count > 0)
+    .sort(([dateA], [dateB]) => dateB.localeCompare(dateA));
+  if (!entries.length) return "";
+
+  return `
+    <section class="panel" aria-labelledby="activity-heading">
+      <h2 id="activity-heading">Journeys represented by date</h2>
+      <ol class="activity-list">
+        ${entries
+          .map(
+            ([date, count]) => `
+              <li><time datetime="${date}">${escapeHtml(formatReportDate(date))}</time><strong>${count} ${count === 1 ? "report" : "reports"}</strong></li>`,
+          )
+          .join("")}
+      </ol>
+      <p class="section-intro">These are journey dates stored with the feedback, not a live service-status history.</p>
+    </section>`;
+}
+
+function hasConditionData(stats, category) {
+  if (category === "generalCoach") {
+    return Number(stats?.ratingCounts?.generalCoach || 0) > 0;
+  }
+  if (category === "coachFloor") {
+    return (
+      Number(stats?.ratingCounts?.coachFloor || 0) > 0 ||
+      statusTotal(mergeStatusCounts(stats, ["coachFloorStatus"])) > 0
+    );
+  }
+  if (category === "toilet") {
+    return (
+      Number(stats?.ratingCounts?.toilet || 0) > 0 ||
+      statusTotal(
+        mergeStatusCounts(stats, ["toilet1Status", "toilet2Status"]),
+      ) > 0 ||
+      Number(stats?.booleanCounts?.toilet1WaterNA || 0) > 0 ||
+      Number(stats?.booleanCounts?.toilet2WaterNA || 0) > 0 ||
+      Number(stats?.booleanCounts?.toilet1Trash || 0) > 0 ||
+      Number(stats?.booleanCounts?.toilet2Trash || 0) > 0
+    );
+  }
+  return (
+    Number(stats?.ratingCounts?.dustbin || 0) > 0 ||
+    statusTotal(
+      mergeStatusCounts(stats, ["dustbin1Status", "dustbin2Status"]),
+    ) > 0
+  );
+}
+
+function renderContributionPrompt(train, stats, quality) {
+  if (!quality.feedbackCount) return "";
+  const missing = RATING_CATEGORIES.filter(
+    ([component]) => !hasConditionData(stats, component),
+  ).map(([component]) => MISSING_DATA_LABELS[component]);
+  let message;
+  if (missing.length) {
+    message = `There are no recorded observations yet for ${escapeHtml(naturalJoin(missing))}. A passenger report can complete this train’s cleanliness picture.`;
+  } else if (quality.coachCount <= 1) {
+    message = "All four cleanliness areas have some data, but only one coach is represented. A report from another coach would make the comparison more useful.";
+  } else {
+    message = "All four cleanliness areas have some data. A recent report can show whether conditions differ on another coach, date or cleaning cycle.";
+  }
+
+  return `
+    <section class="panel contribution" aria-labelledby="contribution-heading">
+      <h2 id="contribution-heading">Add what is missing for ${escapeHtml(train.number)} ${escapeHtml(train.name)}</h2>
+      <p>${message}</p>
+      <a class="button inline" href="/open?train=${train.number}" data-ga-event="open_app_click" data-ga-location="train_page_missing_data" data-train-number="${train.number}">Rate this train in RailHygiene</a>
+    </section>`;
+}
+
 function renderRelatedTrains(related) {
   if (!related.length) return "";
   return `
     <section class="panel related" aria-labelledby="related-heading">
-      <p class="eyebrow">Keep exploring</p>
       <h2 id="related-heading">Related trains</h2>
       <div class="related-grid">
         ${related
@@ -374,7 +587,8 @@ function renderRelatedTrains(related) {
 }
 
 function renderTrainPage(train, stats, related, summaryLastUpdated) {
-  const feedbackCount = Number(stats?.feedbackCount || 0);
+  const quality = trainPageQuality(stats);
+  const feedbackCount = quality.feedbackCount;
   const hasFeedback = feedbackCount > 0;
   const canonical = `${SITE_URL}/train/${train.number}/`;
   const title = truncate(
@@ -389,10 +603,8 @@ function renderTrainPage(train, stats, related, summaryLastUpdated) {
       : `Find route details and contribute the first community coach cleanliness report for train ${train.number} ${train.name}, travelling from ${train.src} to ${train.dest}.`,
     160,
   );
-  const lastReport = hasFeedback
-    ? latestFeedbackDate(stats, summaryLastUpdated)
-    : null;
-  const robots = hasFeedback ? "index,follow" : "noindex,follow";
+  const lastReport = hasFeedback ? latestFeedbackDate(stats, null) : null;
+  const robots = quality.indexEligible ? "index,follow" : "noindex,follow";
 
   const webPageSchema = {
         "@context": "https://schema.org",
@@ -457,9 +669,7 @@ function renderTrainPage(train, stats, related, summaryLastUpdated) {
         ${ratingMeter("Coach floor", stats.avgFloorRating, stats, "coachFloor")}
         ${ratingMeter("Toilets", stats.avgToiletRating, stats, "toilet")}
         ${ratingMeter("Dustbins", stats.avgDustbinRating, stats, "dustbin")}
-        <p class="updated">Most recent recorded journey: <time datetime="${lastReport}">${escapeHtml(
-          lastReport,
-        )}</time></p>
+        ${lastReport ? `<p class="updated">Most recent recorded journey: <time datetime="${lastReport}">${escapeHtml(formatReportDate(lastReport))}</time></p>` : '<p class="updated">No valid journey date was supplied with this feedback.</p>'}
       </section>
       ${renderCoachTable(stats)}`
     : `
@@ -496,10 +706,10 @@ ${GA4_TAG}
   <script type="application/ld+json">${safeJson(breadcrumbSchema)}</script>
   <style>
     :root{color-scheme:light;--ink:#102a43;--muted:#52677b;--line:#d8e2ec;--blue:#0067a8;--blue-dark:#004f82;--sky:#e8f4ff;--surface:#fff;--bg:#f6f9fc;--gold:#f5b700;font-family:"Outfit",system-ui,sans-serif}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink)}a{color:inherit}.site-header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line)}.nav{width:min(1120px,calc(100% - 32px));margin:auto;min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{min-height:44px;display:flex;align-items:center;gap:12px;text-decoration:none;font-size:1.2rem;font-weight:700}.brand img{width:40px;height:40px;border-radius:10px}.nav-links{display:flex;gap:18px}.nav-links a{min-height:44px;display:inline-flex;align-items:center;text-decoration:none;color:var(--muted);font-weight:600}.wrap{width:min(980px,calc(100% - 32px));margin:auto}.crumbs{padding:12px 0 4px;color:var(--muted);font-size:.92rem}.crumbs a{min-width:44px;min-height:44px;padding:0 4px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}.hero{position:relative;overflow:hidden;padding:42px;border-radius:28px;background:linear-gradient(135deg,#004f82,#0879bb);color:#fff;box-shadow:0 22px 55px rgba(0,79,130,.18)}.hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-90px;top:-110px;background:rgba(255,255,255,.1)}.eyebrow{margin:0 0 8px;text-transform:uppercase;letter-spacing:.12em;font-size:.78rem;font-weight:700;color:#3f6580}.hero .eyebrow{color:#fff}.hero h1{position:relative;margin:0;font-size:clamp(2rem,6vw,3.5rem);line-height:1.05;max-width:760px}.route{position:relative;margin:18px 0 0;font-size:1.2rem;color:#fff}.route span{padding:0 8px}.actions{position:relative;display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}.button{min-height:48px;display:inline-flex;align-items:center;justify-content:center;padding:0 20px;border-radius:13px;text-decoration:none;font-weight:700}.button.primary{background:#fff;color:var(--blue-dark)}.button.secondary{border:1px solid rgba(255,255,255,.65);color:#fff}.notice{margin:18px 0 0;color:#fff;font-size:.9rem}.grid{min-width:0;display:grid;gap:22px;margin:24px 0}.panel{min-width:0;max-width:100%;padding:28px;border-radius:22px;background:var(--surface);border:1px solid var(--line);box-shadow:0 12px 30px rgba(16,42,67,.06)}.section-heading{display:flex;align-items:start;justify-content:space-between;gap:20px}.panel h2{margin:0 0 18px;font-size:1.55rem}.report-count{min-width:86px;padding:10px 14px;border-radius:16px;background:var(--sky);text-align:center}.report-count strong,.report-count span{display:block}.report-count strong{font-size:1.45rem;color:var(--blue)}.rating-row{display:grid;grid-template-columns:minmax(110px,1fr) minmax(120px,2fr) 56px;align-items:center;gap:14px;padding:12px 0;border-top:1px solid #edf2f7}.meter{height:9px;border-radius:999px;background:#e7edf3;overflow:hidden}.meter span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--gold),#ffd866)}.rating-row strong{text-align:right}.updated{margin:16px 0 0;color:var(--muted);font-size:.9rem}.table-wrap{min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}table{width:100%;border-collapse:collapse;min-width:620px}th,td{padding:13px 12px;border-bottom:1px solid #e8eef3;text-align:right}th:first-child,td:first-child{text-align:left}thead th{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.empty{text-align:center;padding:44px 28px}.empty-icon{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 18px;border-radius:18px;background:var(--sky);color:var(--blue);font-size:1.7rem}.empty p:last-child{max-width:620px;margin:0 auto;color:var(--muted);line-height:1.65}.related-grid{min-width:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.related-grid a{display:block;min-height:44px;padding:16px;border:1px solid var(--line);border-radius:15px;text-decoration:none}.related-grid a:hover{border-color:#79b7dd;background:#f7fbff}.related-grid strong,.related-grid span{display:block}.related-grid span{margin-top:5px;color:var(--muted);font-size:.9rem}.disclaimer{padding:22px;border-radius:18px;background:#fff8e7;border:1px solid #f0d899;color:#644d12;line-height:1.6}.site-footer{margin-top:40px;padding:18px 16px;text-align:center;color:var(--muted);border-top:1px solid var(--line);background:#fff}.site-footer a{min-width:44px;min-height:44px;padding:0 4px;display:inline-flex;align-items:center;justify-content:center;margin:0 4px}@media(max-width:680px){.nav-links{display:none}.hero{padding:30px 24px;border-radius:22px}.panel{padding:22px}.rating-row{grid-template-columns:minmax(0,1fr) 50px}.meter{grid-column:1/-1;grid-row:2}.related-grid{grid-template-columns:1fr}}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink)}a{color:inherit}h1,h2,h3{text-wrap:balance;overflow-wrap:anywhere}p{text-wrap:pretty}a:focus-visible,.table-wrap:focus-visible{outline:3px solid #3b98d0;outline-offset:3px}.site-header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line)}.nav{width:min(1120px,calc(100% - 32px));margin:auto;min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{min-height:44px;display:flex;align-items:center;gap:12px;text-decoration:none;font-size:1.2rem;font-weight:700}.brand img{width:40px;height:40px;border-radius:10px}.nav-links{display:flex;gap:18px}.nav-links a{min-height:44px;display:inline-flex;align-items:center;text-decoration:none;color:var(--muted);font-weight:600}.wrap{width:min(980px,calc(100% - 32px));margin:auto}.crumbs{padding:12px 0 4px;color:var(--muted);font-size:.92rem}.crumbs a{min-width:44px;min-height:44px;padding:0 4px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}.hero{position:relative;overflow:hidden;padding:42px;border-radius:28px;background:linear-gradient(135deg,#004f82,#0879bb);color:#fff;box-shadow:0 22px 55px rgba(0,79,130,.18)}.hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-90px;top:-110px;background:rgba(255,255,255,.1)}.eyebrow{margin:0 0 8px;text-transform:uppercase;letter-spacing:.12em;font-size:.78rem;font-weight:700;color:#3f6580}.hero .eyebrow{color:#fff}.hero h1{position:relative;margin:0;font-size:clamp(2rem,6vw,3.5rem);line-height:1.05;max-width:760px}.route{position:relative;margin:18px 0 0;font-size:1.2rem;color:#fff}.route span{padding:0 8px}.actions{position:relative;display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}.button{min-height:48px;display:inline-flex;align-items:center;justify-content:center;padding:0 20px;border-radius:13px;text-decoration:none;font-weight:700}.button.primary{background:#fff;color:var(--blue-dark)}.button.secondary{border:1px solid rgba(255,255,255,.65);color:#fff}.button.inline{margin-top:10px;background:var(--blue);color:#fff}.notice{margin:18px 0 0;color:#fff;font-size:.9rem}.grid{min-width:0;display:grid;gap:22px;margin:24px 0}.panel{min-width:0;max-width:100%;padding:28px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}.section-heading{display:flex;align-items:start;justify-content:space-between;gap:20px}.panel h2{margin:0 0 18px;font-size:1.55rem}.panel>p:not(.eyebrow):not(.updated),.section-intro,.coverage-note{max-width:75ch}.section-intro,.coverage-note{color:var(--muted);line-height:1.6}.report-count{min-width:86px;padding:10px 14px;border-radius:16px;background:var(--sky);text-align:center}.report-count strong,.report-count span{display:block}.report-count strong{font-size:1.45rem;color:var(--blue)}.rating-row{display:grid;grid-template-columns:minmax(110px,1fr) minmax(120px,2fr) minmax(74px,auto);align-items:center;gap:14px;padding:12px 0;border-top:1px solid #edf2f7}.meter{height:9px;border-radius:999px;background:#e7edf3;overflow:hidden}.meter span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--gold),#ffd866)}.rating-value{text-align:right}.rating-value strong,.rating-value span{display:block}.rating-value span{margin-top:2px;color:var(--muted);font-size:.76rem}.updated{margin:16px 0 0;color:var(--muted);font-size:.9rem}.coverage-badge{flex:none;padding:7px 11px;border-radius:999px;font-size:.82rem;font-weight:700}.coverage-badge.limited{background:#fff1dc;color:#7a4800}.coverage-badge.developing{background:var(--sky);color:var(--blue-dark)}.coverage-badge.broader{background:#e5f6ec;color:#17623a}.coverage-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:8px 0 18px}.coverage-grid>div{padding:16px;border-radius:16px;background:var(--bg);border:1px solid #e8eef3}.coverage-grid strong,.coverage-grid span{display:block}.coverage-grid strong{font-size:1.45rem;color:var(--blue-dark)}.coverage-grid span{margin-top:4px;color:var(--muted);font-size:.86rem}.condition-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}.condition-card{padding:17px;border-radius:16px;background:var(--bg);border:1px solid #e8eef3}.condition-card h3{margin:0 0 10px}.condition-card p{margin:5px 0}.condition-values{font-weight:700;color:var(--blue-dark)}.issue-list{margin:18px 0 0;padding:16px 16px 16px 36px;border-radius:14px;background:#fff8e7;color:#644d12}.issue-list li+li{margin-top:8px}.table-wrap{min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}table{width:100%;border-collapse:collapse;min-width:860px}th,td{padding:13px 12px;border-bottom:1px solid #e8eef3;text-align:right}th:first-child,td:first-child{text-align:left}thead th{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.table-rating strong,.table-rating small{display:block}.table-rating small,.not-rated{color:var(--muted);font-size:.76rem}.activity-list{list-style:none;margin:0;padding:0;border-top:1px solid #e8eef3}.activity-list li{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid #e8eef3}.activity-list strong{color:var(--blue-dark)}.contribution{background:linear-gradient(135deg,#fff,#edf7ff)}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.empty{text-align:center;padding:44px 28px}.empty-icon{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 18px;border-radius:18px;background:var(--sky);color:var(--blue);font-size:1.7rem}.empty p:last-child{max-width:620px;margin:0 auto;color:var(--muted);line-height:1.65}.related-grid{min-width:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.related-grid a{display:block;min-height:44px;padding:16px;border:1px solid var(--line);border-radius:15px;text-decoration:none}.related-grid a:hover{border-color:#79b7dd;background:#f7fbff}.related-grid strong,.related-grid span{display:block}.related-grid span{margin-top:5px;color:var(--muted);font-size:.9rem}.disclaimer{padding:22px;border-radius:18px;background:#fff8e7;border:1px solid #f0d899;color:#644d12;line-height:1.6}.site-footer{margin-top:40px;padding:18px 16px;text-align:center;color:var(--muted);border-top:1px solid var(--line);background:#fff}.site-footer a{min-width:44px;min-height:44px;padding:0 4px;display:inline-flex;align-items:center;justify-content:center;margin:0 4px}@media(max-width:680px){.nav-links{display:none}.hero{padding:30px 24px;border-radius:22px}.panel{padding:22px}.section-heading{align-items:flex-start;flex-direction:column}.rating-row{grid-template-columns:minmax(0,1fr) minmax(70px,auto)}.meter{grid-column:1/-1;grid-row:2}.coverage-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.condition-grid{grid-template-columns:1fr}.related-grid{grid-template-columns:1fr}}
   </style>
 </head>
-<body>
+<body data-index-eligible="${quality.indexEligible}" data-ad-eligible="${quality.adEligible}">
   <header class="site-header">
     <nav class="nav" aria-label="Primary navigation">
       <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="40" height="40">RailHygiene</a>
@@ -522,7 +732,11 @@ ${GA4_TAG}
     </section>
     <div class="grid">
       ${dataPanel}
-      ${renderInterpretation(train, stats, feedbackCount, lastReport)}
+      ${hasFeedback ? renderCoverage(stats, quality) : ""}
+      ${hasFeedback ? renderConditionCounts(stats) : ""}
+      ${renderInterpretation(train, stats, quality, lastReport)}
+      ${hasFeedback ? renderReportActivity(stats) : ""}
+      ${renderContributionPrompt(train, stats, quality)}
       ${renderRelatedTrains(related)}
       <aside class="disclaimer"><strong>Need cleaning help now?</strong> Use the official <a href="https://railmadad.indianrailways.gov.in/" rel="nofollow noopener" data-ga-event="railmadad_click" data-ga-location="train_page_help" data-train-number="${train.number}">RailMadad service</a> or call railway helpline 139. RailHygiene records anonymous historical feedback for future passengers and does not resolve complaints.</aside>
     </div>
@@ -532,10 +746,10 @@ ${GA4_TAG}
 </html>`;
 }
 
-function renderDirectoryPage(trains, feedbackTrainNumbers, lastUpdated) {
+function renderDirectoryPage(trains, indexEligibleTrainNumbers, lastUpdated) {
   const formattedLastUpdated = formatTimestamp(lastUpdated);
   const featured = trains
-    .filter((train) => feedbackTrainNumbers.has(train.number))
+    .filter((train) => indexEligibleTrainNumbers.has(train.number))
     .slice(0, 100);
   const featuredMarkup = featured
     .map(
@@ -789,11 +1003,19 @@ ${entries
 async function generate() {
   const [trains, summary] = await Promise.all([loadTrains(), loadSummary()]);
   const trainNumbers = new Set(trains.map((train) => train.number));
-  const feedbackTrainNumbers = new Set(
+  const indexEligibleTrainNumbers = new Set(
     Object.entries(summary.statsByTrain)
       .filter(
         ([number, stats]) =>
-          trainNumbers.has(number) && Number(stats?.feedbackCount || 0) > 0,
+          trainNumbers.has(number) && trainPageQuality(stats).indexEligible,
+      )
+      .map(([number]) => number),
+  );
+  const adEligibleTrainNumbers = new Set(
+    Object.entries(summary.statsByTrain)
+      .filter(
+        ([number, stats]) =>
+          trainNumbers.has(number) && trainPageQuality(stats).adEligible,
       )
       .map(([number]) => number),
   );
@@ -826,8 +1048,8 @@ async function generate() {
           .filter((candidate) => candidate.number !== train.number)
           .sort(
             (a, b) =>
-              Number(feedbackTrainNumbers.has(b.number)) -
-                Number(feedbackTrainNumbers.has(a.number)) ||
+              Number(indexEligibleTrainNumbers.has(b.number)) -
+                Number(indexEligibleTrainNumbers.has(a.number)) ||
               a.number.localeCompare(b.number),
           )
           .map((candidate) => [candidate.number, candidate]),
@@ -853,13 +1075,13 @@ async function generate() {
   await writeFile(
     path.join(TRAINS_DIRECTORY, "index.html"),
     cleanGeneratedHtml(
-      renderDirectoryPage(trains, feedbackTrainNumbers, summary.lastUpdated),
+      renderDirectoryPage(trains, indexEligibleTrainNumbers, summary.lastUpdated),
     ),
     "utf8",
   );
 
   const ratedTrains = trains.filter((train) =>
-    feedbackTrainNumbers.has(train.number),
+    indexEligibleTrainNumbers.has(train.number),
   );
   const reportPageSize = 55;
   const reportPageCount = Math.ceil(ratedTrains.length / reportPageSize);
@@ -888,7 +1110,7 @@ async function generate() {
     lastmod: gitLastModified(file),
   }));
   const trainEntries = trains
-    .filter((train) => feedbackTrainNumbers.has(train.number))
+    .filter((train) => indexEligibleTrainNumbers.has(train.number))
     .map((train) => ({
       loc: `${SITE_URL}/train/${train.number}/`,
       lastmod: latestFeedbackDate(
@@ -927,7 +1149,7 @@ async function generate() {
   );
 
   console.log(
-    `Generated ${trains.length} train pages; ${trainEntries.length} feedback-rich pages are indexable.`,
+    `Generated ${trains.length} train pages; ${trainEntries.length} evidence-rich pages are indexable and ${adEligibleTrainNumbers.size} meet the future ad-quality gate.`,
   );
 }
 

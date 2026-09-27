@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { trainPageQuality } from "./train-page-quality.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const trains = JSON.parse(
@@ -10,20 +11,21 @@ const summary = JSON.parse(
   await readFile(path.join(ROOT, "data", "dashboard-summary.json"), "utf8"),
 );
 
-const feedbackTrainNumbers = new Set(
+const indexEligibleTrainNumbers = new Set(
   Object.entries(summary.statsByTrain)
-    .filter(([, stats]) => Number(stats?.feedbackCount || 0) > 0)
+    .filter(([, stats]) => trainPageQuality(stats).indexEligible)
     .map(([number]) => number),
 );
 const validTrainNumbers = new Set(trains.map((train) => train.number));
 const expectedIndexable = new Set(
-  [...feedbackTrainNumbers].filter((number) => validTrainNumbers.has(number)),
+  [...indexEligibleTrainNumbers].filter((number) => validTrainNumbers.has(number)),
 );
 
 for (const train of trains) {
   const file = path.join(ROOT, "train", train.number, "index.html");
   const html = await readFile(file, "utf8");
-  const shouldIndex = expectedIndexable.has(train.number);
+  const quality = trainPageQuality(summary.statsByTrain[train.number]);
+  const shouldIndex = quality.indexEligible && validTrainNumbers.has(train.number);
   const expectedRobots = shouldIndex ? "index,follow" : "noindex,follow";
 
   if (!html.includes(`<meta name="robots" content="${expectedRobots}">`)) {
@@ -42,7 +44,38 @@ for (const train of trains) {
   if (!html.includes(`<h1>${train.number} · `)) {
     throw new Error(`Train ${train.number} is missing its unique heading.`);
   }
+  if (
+    !html.includes(
+      `<body data-index-eligible="${quality.indexEligible}" data-ad-eligible="${quality.adEligible}">`,
+    )
+  ) {
+    throw new Error(`Train ${train.number} has incorrect page-quality gates.`);
+  }
+  if (!quality.adEligible && html.includes("adsbygoogle")) {
+    throw new Error(`Train ${train.number} contains ads despite failing the ad-quality gate.`);
+  }
   if (shouldIndex) {
+    for (const section of [
+      'id="coverage-heading"',
+      'id="interpretation-heading"',
+      'id="contribution-heading"',
+    ]) {
+      if (!html.includes(section)) {
+        throw new Error(`Indexable train ${train.number} is missing ${section}.`);
+      }
+    }
+    if (quality.dateCount > 0 && !html.includes('id="activity-heading"')) {
+      throw new Error(`Train ${train.number} is missing report-date activity.`);
+    }
+    if (
+      quality.conditionObservationCount + quality.issueFlagCount > 0 &&
+      !html.includes('id="conditions-heading"')
+    ) {
+      throw new Error(`Train ${train.number} is missing condition counts.`);
+    }
+    if (quality.coachCount > 0 && !html.includes("<th>Dustbins</th>")) {
+      throw new Error(`Train ${train.number} has an incomplete coach table.`);
+    }
     const visibleWords = html
       .replace(/<script[\s\S]*?<\/script>/gi, " ")
       .replace(/<style[\s\S]*?<\/style>/gi, " ")
