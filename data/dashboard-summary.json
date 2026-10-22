@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-21T04:52:41.337Z",
+  "lastUpdated": "2026-10-22T04:52:11.498Z",
   "statsByTrain": {
     "10116": {
       "trainName": "MAO BDTS EXPRESS",
@@ -21468,21 +21468,21 @@
     },
     "13247": {
       "trainName": "CAPITAL EXPRESS",
-      "feedbackCount": 2,
+      "feedbackCount": 3,
       "sumGeneralRating": 2,
       "sumFloorRating": 0,
-      "sumToiletRating": 2,
+      "sumToiletRating": 4,
       "sumDustbinRating": 0,
       "ratingCounts": {
         "generalCoach": 1,
         "coachFloor": 0,
-        "toilet": 2,
+        "toilet": 3,
         "dustbin": 0
       },
       "statusCounts": {
         "coachFloorStatus": {},
         "toilet1Status": {
-          "Dirty": 1
+          "Dirty": 2
         },
         "toilet2Status": {
           "Dirty": 1
@@ -21497,10 +21497,46 @@
         "toilet2WaterNA": 1
       },
       "feedbacksByDate": {
+        "2026-10-21": 1,
         "2026-06-19": 1,
         "2026-06-04": 1
       },
       "coachStats": {
+        "A1": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 0,
+          "sumToiletRating": 2,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 0,
+            "toilet": 1,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Dirty": 1
+            },
+            "toilet2Status": {},
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 0,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-10-21": 1
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 0,
+          "avgToiletRating": 2,
+          "avgDustbinRating": 0
+        },
         "S2": {
           "feedbackCount": 1,
           "sumGeneralRating": 0,
@@ -21574,7 +21610,7 @@
       },
       "avgGeneralRating": 2,
       "avgFloorRating": 0,
-      "avgToiletRating": 1,
+      "avgToiletRating": 1.3333333333333333,
       "avgDustbinRating": 0
     },
     "13248": {
@@ -37202,15 +37238,15 @@
     },
     "18102": {
       "trainName": "JAT TATA EXPRESS",
-      "feedbackCount": 1,
+      "feedbackCount": 2,
       "sumGeneralRating": 2,
       "sumFloorRating": 3,
-      "sumToiletRating": 8,
+      "sumToiletRating": 10,
       "sumDustbinRating": 8,
       "ratingCounts": {
         "generalCoach": 1,
         "coachFloor": 1,
-        "toilet": 2,
+        "toilet": 3,
         "dustbin": 2
       },
       "statusCounts": {
@@ -37218,6 +37254,7 @@
           "Clean": 1
         },
         "toilet1Status": {
+          "Dirty": 1,
           "Clean": 1
         },
         "toilet2Status": {
@@ -37237,9 +37274,45 @@
         "toilet2WaterNA": 0
       },
       "feedbacksByDate": {
+        "2026-10-19": 1,
         "2026-04-27": 1
       },
       "coachStats": {
+        "B3": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 0,
+          "sumToiletRating": 2,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 0,
+            "toilet": 1,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Dirty": 1
+            },
+            "toilet2Status": {},
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 0,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-10-19": 1
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 0,
+          "avgToiletRating": 2,
+          "avgDustbinRating": 0
+        },
         "B1": {
           "feedbackCount": 1,
           "sumGeneralRating": 2,
@@ -37286,7 +37359,7 @@
       },
       "avgGeneralRating": 2,
       "avgFloorRating": 3,
-      "avgToiletRating": 4,
+      "avgToiletRating": 3.3333333333333335,
       "avgDustbinRating": 4
     },
     "18109": {
@@ -48420,6 +48493,83 @@
       "avgGeneralRating": 0,
       "avgFloorRating": 0,
       "avgToiletRating": 0,
+      "avgDustbinRating": 0
+    },
+    "22436": {
+      "trainName": "VANDE BHARAT EX",
+      "feedbackCount": 1,
+      "sumGeneralRating": 2,
+      "sumFloorRating": 0,
+      "sumToiletRating": 4,
+      "sumDustbinRating": 0,
+      "ratingCounts": {
+        "generalCoach": 1,
+        "coachFloor": 0,
+        "toilet": 2,
+        "dustbin": 0
+      },
+      "statusCounts": {
+        "coachFloorStatus": {},
+        "toilet1Status": {
+          "Dirty": 1
+        },
+        "toilet2Status": {
+          "Dirty": 1
+        },
+        "dustbin1Status": {},
+        "dustbin2Status": {}
+      },
+      "booleanCounts": {
+        "toilet1Trash": 0,
+        "toilet2Trash": 0,
+        "toilet1WaterNA": 0,
+        "toilet2WaterNA": 0
+      },
+      "feedbacksByDate": {
+        "2026-10-21": 1
+      },
+      "coachStats": {
+        "C17": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 2,
+          "sumFloorRating": 0,
+          "sumToiletRating": 4,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 1,
+            "coachFloor": 0,
+            "toilet": 2,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Dirty": 1
+            },
+            "toilet2Status": {
+              "Dirty": 1
+            },
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 0,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-10-21": 1
+          },
+          "avgGeneralRating": 2,
+          "avgFloorRating": 0,
+          "avgToiletRating": 2,
+          "avgDustbinRating": 0
+        }
+      },
+      "avgGeneralRating": 2,
+      "avgFloorRating": 0,
+      "avgToiletRating": 2,
       "avgDustbinRating": 0
     },
     "22444": {
