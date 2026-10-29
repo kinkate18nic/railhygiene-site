@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-28T02:18:05.706Z",
+  "lastUpdated": "2026-10-29T08:31:50.933Z",
   "statsByTrain": {
     "10116": {
       "trainName": "MAO BDTS EXPRESS",
@@ -9918,29 +9918,30 @@
     },
     "12432": {
       "trainName": "TVC RAJDHANI",
-      "feedbackCount": 1,
+      "feedbackCount": 2,
       "sumGeneralRating": 1,
       "sumFloorRating": 3,
-      "sumToiletRating": 2,
-      "sumDustbinRating": 8,
+      "sumToiletRating": 4,
+      "sumDustbinRating": 9,
       "ratingCounts": {
         "generalCoach": 1,
         "coachFloor": 1,
-        "toilet": 2,
-        "dustbin": 2
+        "toilet": 4,
+        "dustbin": 3
       },
       "statusCounts": {
         "coachFloorStatus": {
           "Clean": 1
         },
         "toilet1Status": {
-          "Dirty": 1
+          "Dirty": 2
         },
         "toilet2Status": {
-          "Dirty": 1
+          "Dirty": 2
         },
         "dustbin1Status": {
-          "Usable": 1
+          "Usable": 1,
+          "Unusable": 1
         },
         "dustbin2Status": {
           "Usable": 1
@@ -9953,7 +9954,8 @@
         "toilet2WaterNA": 0
       },
       "feedbacksByDate": {
-        "2026-05-05": 1
+        "2026-05-05": 1,
+        "2026-10-27": 1
       },
       "coachStats": {
         "B5": {
@@ -9998,12 +10000,51 @@
           "avgFloorRating": 3,
           "avgToiletRating": 1,
           "avgDustbinRating": 4
+        },
+        "B10": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 0,
+          "sumToiletRating": 2,
+          "sumDustbinRating": 1,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 0,
+            "toilet": 2,
+            "dustbin": 1
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Dirty": 1
+            },
+            "toilet2Status": {
+              "Dirty": 1
+            },
+            "dustbin1Status": {
+              "Unusable": 1
+            },
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 0,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-10-27": 1
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 0,
+          "avgToiletRating": 1,
+          "avgDustbinRating": 1
         }
       },
       "avgGeneralRating": 1,
       "avgFloorRating": 3,
       "avgToiletRating": 1,
-      "avgDustbinRating": 4
+      "avgDustbinRating": 3
     },
     "12433": {
       "trainName": "MAS NZM RAJDHANI",
