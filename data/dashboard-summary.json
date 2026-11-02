@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-11-01T07:36:06.099Z",
+  "lastUpdated": "2026-11-02T06:10:30.265Z",
   "statsByTrain": {
     "10116": {
       "trainName": "MAO BDTS EXPRESS",
@@ -3129,6 +3129,79 @@
           },
           "feedbacksByDate": {
             "2026-06-01": 1
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 0,
+          "avgToiletRating": 2,
+          "avgDustbinRating": 0
+        }
+      },
+      "avgGeneralRating": 0,
+      "avgFloorRating": 0,
+      "avgToiletRating": 2,
+      "avgDustbinRating": 0
+    },
+    "12017": {
+      "trainName": "DDN SHTBDI EXP",
+      "feedbackCount": 1,
+      "sumGeneralRating": 0,
+      "sumFloorRating": 0,
+      "sumToiletRating": 2,
+      "sumDustbinRating": 0,
+      "ratingCounts": {
+        "generalCoach": 0,
+        "coachFloor": 0,
+        "toilet": 1,
+        "dustbin": 0
+      },
+      "statusCounts": {
+        "coachFloorStatus": {},
+        "toilet1Status": {
+          "Dirty": 1
+        },
+        "toilet2Status": {},
+        "dustbin1Status": {},
+        "dustbin2Status": {}
+      },
+      "booleanCounts": {
+        "toilet1Trash": 0,
+        "toilet2Trash": 0,
+        "toilet1WaterNA": 0,
+        "toilet2WaterNA": 0
+      },
+      "feedbacksByDate": {
+        "2026-11-01": 1
+      },
+      "coachStats": {
+        "C8": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 0,
+          "sumToiletRating": 2,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 0,
+            "toilet": 1,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Dirty": 1
+            },
+            "toilet2Status": {},
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 0,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-11-01": 1
           },
           "avgGeneralRating": 0,
           "avgFloorRating": 0,
@@ -9519,23 +9592,24 @@
     },
     "12423": {
       "trainName": "RAJDHANI EXP",
-      "feedbackCount": 4,
+      "feedbackCount": 5,
       "sumGeneralRating": 2,
-      "sumFloorRating": 3,
-      "sumToiletRating": 8,
+      "sumFloorRating": 4,
+      "sumToiletRating": 9,
       "sumDustbinRating": 8,
       "ratingCounts": {
         "generalCoach": 1,
-        "coachFloor": 1,
-        "toilet": 6,
+        "coachFloor": 2,
+        "toilet": 7,
         "dustbin": 2
       },
       "statusCounts": {
         "coachFloorStatus": {
-          "Clean": 1
+          "Clean": 1,
+          "Dirty": 1
         },
         "toilet1Status": {
-          "Dirty": 4
+          "Dirty": 5
         },
         "toilet2Status": {
           "Dirty": 2
@@ -9557,6 +9631,7 @@
         "2026-07-28": 1,
         "2026-07-04": 1,
         "2026-04-25": 1,
+        "2026-11-01": 1,
         "2026-06-19": 1
       },
       "coachStats": {
@@ -9676,21 +9751,23 @@
           "avgDustbinRating": 4
         },
         "A4": {
-          "feedbackCount": 1,
+          "feedbackCount": 2,
           "sumGeneralRating": 0,
-          "sumFloorRating": 0,
-          "sumToiletRating": 1,
+          "sumFloorRating": 1,
+          "sumToiletRating": 2,
           "sumDustbinRating": 0,
           "ratingCounts": {
             "generalCoach": 0,
-            "coachFloor": 0,
-            "toilet": 1,
+            "coachFloor": 1,
+            "toilet": 2,
             "dustbin": 0
           },
           "statusCounts": {
-            "coachFloorStatus": {},
-            "toilet1Status": {
+            "coachFloorStatus": {
               "Dirty": 1
+            },
+            "toilet1Status": {
+              "Dirty": 2
             },
             "toilet2Status": {},
             "dustbin1Status": {},
@@ -9703,17 +9780,18 @@
             "toilet2WaterNA": 0
           },
           "feedbacksByDate": {
+            "2026-11-01": 1,
             "2026-06-19": 1
           },
           "avgGeneralRating": 0,
-          "avgFloorRating": 0,
+          "avgFloorRating": 1,
           "avgToiletRating": 1,
           "avgDustbinRating": 0
         }
       },
       "avgGeneralRating": 2,
-      "avgFloorRating": 3,
-      "avgToiletRating": 1.3333333333333333,
+      "avgFloorRating": 2,
+      "avgToiletRating": 1.2857142857142858,
       "avgDustbinRating": 4
     },
     "12424": {
@@ -30989,6 +31067,83 @@
       "avgToiletRating": 1,
       "avgDustbinRating": 1
     },
+    "15659": {
+      "trainName": "LTT AGTL AC EXP",
+      "feedbackCount": 1,
+      "sumGeneralRating": 0,
+      "sumFloorRating": 0,
+      "sumToiletRating": 4,
+      "sumDustbinRating": 0,
+      "ratingCounts": {
+        "generalCoach": 0,
+        "coachFloor": 0,
+        "toilet": 2,
+        "dustbin": 0
+      },
+      "statusCounts": {
+        "coachFloorStatus": {},
+        "toilet1Status": {
+          "Dirty": 1
+        },
+        "toilet2Status": {
+          "Dirty": 1
+        },
+        "dustbin1Status": {},
+        "dustbin2Status": {}
+      },
+      "booleanCounts": {
+        "toilet1Trash": 0,
+        "toilet2Trash": 0,
+        "toilet1WaterNA": 1,
+        "toilet2WaterNA": 1
+      },
+      "feedbacksByDate": {
+        "2026-11-01": 1
+      },
+      "coachStats": {
+        "B5": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 0,
+          "sumToiletRating": 4,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 0,
+            "toilet": 2,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Dirty": 1
+            },
+            "toilet2Status": {
+              "Dirty": 1
+            },
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 1,
+            "toilet2WaterNA": 1
+          },
+          "feedbacksByDate": {
+            "2026-11-01": 1
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 0,
+          "avgToiletRating": 2,
+          "avgDustbinRating": 0
+        }
+      },
+      "avgGeneralRating": 0,
+      "avgFloorRating": 0,
+      "avgToiletRating": 2,
+      "avgDustbinRating": 0
+    },
     "15662": {
       "trainName": "KYQ RNC EXPRESS",
       "feedbackCount": 1,
@@ -34396,6 +34551,95 @@
       "avgFloorRating": 0,
       "avgToiletRating": 2,
       "avgDustbinRating": 0
+    },
+    "16525": {
+      "trainName": "CAPE SBC EXPRESS",
+      "feedbackCount": 1,
+      "sumGeneralRating": 2,
+      "sumFloorRating": 2,
+      "sumToiletRating": 2,
+      "sumDustbinRating": 2,
+      "ratingCounts": {
+        "generalCoach": 1,
+        "coachFloor": 1,
+        "toilet": 2,
+        "dustbin": 2
+      },
+      "statusCounts": {
+        "coachFloorStatus": {
+          "Dirty": 1
+        },
+        "toilet1Status": {
+          "Dirty": 1
+        },
+        "toilet2Status": {
+          "Dirty": 1
+        },
+        "dustbin1Status": {
+          "Unusable": 1
+        },
+        "dustbin2Status": {
+          "Unusable": 1
+        }
+      },
+      "booleanCounts": {
+        "toilet1Trash": 0,
+        "toilet2Trash": 0,
+        "toilet1WaterNA": 0,
+        "toilet2WaterNA": 0
+      },
+      "feedbacksByDate": {
+        "2026-10-31": 1
+      },
+      "coachStats": {
+        "B5": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 2,
+          "sumFloorRating": 2,
+          "sumToiletRating": 2,
+          "sumDustbinRating": 2,
+          "ratingCounts": {
+            "generalCoach": 1,
+            "coachFloor": 1,
+            "toilet": 2,
+            "dustbin": 2
+          },
+          "statusCounts": {
+            "coachFloorStatus": {
+              "Dirty": 1
+            },
+            "toilet1Status": {
+              "Dirty": 1
+            },
+            "toilet2Status": {
+              "Dirty": 1
+            },
+            "dustbin1Status": {
+              "Unusable": 1
+            },
+            "dustbin2Status": {
+              "Unusable": 1
+            }
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 0,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-10-31": 1
+          },
+          "avgGeneralRating": 2,
+          "avgFloorRating": 2,
+          "avgToiletRating": 1,
+          "avgDustbinRating": 1
+        }
+      },
+      "avgGeneralRating": 2,
+      "avgFloorRating": 2,
+      "avgToiletRating": 1,
+      "avgDustbinRating": 1
     },
     "16526": {
       "trainName": "KANYAKUMARI EXP",
@@ -57958,6 +58202,83 @@
       "avgFloorRating": 0,
       "avgToiletRating": 3,
       "avgDustbinRating": 0
+    },
+    "06581": {
+      "trainName": "YPR SHC SPL",
+      "feedbackCount": 1,
+      "sumGeneralRating": 0,
+      "sumFloorRating": 0,
+      "sumToiletRating": 3,
+      "sumDustbinRating": 1,
+      "ratingCounts": {
+        "generalCoach": 0,
+        "coachFloor": 0,
+        "toilet": 1,
+        "dustbin": 1
+      },
+      "statusCounts": {
+        "coachFloorStatus": {},
+        "toilet1Status": {
+          "Clean": 1
+        },
+        "toilet2Status": {},
+        "dustbin1Status": {
+          "Unusable": 1
+        },
+        "dustbin2Status": {}
+      },
+      "booleanCounts": {
+        "toilet1Trash": 0,
+        "toilet2Trash": 0,
+        "toilet1WaterNA": 1,
+        "toilet2WaterNA": 0
+      },
+      "feedbacksByDate": {
+        "2026-11-01": 1
+      },
+      "coachStats": {
+        "A1": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 0,
+          "sumFloorRating": 0,
+          "sumToiletRating": 3,
+          "sumDustbinRating": 1,
+          "ratingCounts": {
+            "generalCoach": 0,
+            "coachFloor": 0,
+            "toilet": 1,
+            "dustbin": 1
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {
+              "Clean": 1
+            },
+            "toilet2Status": {},
+            "dustbin1Status": {
+              "Unusable": 1
+            },
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 1,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-11-01": 1
+          },
+          "avgGeneralRating": 0,
+          "avgFloorRating": 0,
+          "avgToiletRating": 3,
+          "avgDustbinRating": 1
+        }
+      },
+      "avgGeneralRating": 0,
+      "avgFloorRating": 0,
+      "avgToiletRating": 3,
+      "avgDustbinRating": 1
     },
     "05951": {
       "trainName": "SMVB NTSK SPL",
