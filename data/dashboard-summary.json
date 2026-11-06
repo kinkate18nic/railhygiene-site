@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-11-05T06:51:20.255Z",
+  "lastUpdated": "2026-11-06T02:29:08.982Z",
   "statsByTrain": {
     "10116": {
       "trainName": "MAO BDTS EXPRESS",
@@ -17731,13 +17731,13 @@
     },
     "12864": {
       "trainName": "SMVB HOWRAH EXP",
-      "feedbackCount": 2,
-      "sumGeneralRating": 0,
+      "feedbackCount": 3,
+      "sumGeneralRating": 2,
       "sumFloorRating": 0,
       "sumToiletRating": 6,
       "sumDustbinRating": 0,
       "ratingCounts": {
-        "generalCoach": 0,
+        "generalCoach": 1,
         "coachFloor": 0,
         "toilet": 2,
         "dustbin": 0
@@ -17759,6 +17759,7 @@
       },
       "feedbacksByDate": {
         "2026-08-21": 1,
+        "2026-11-05": 1,
         "2026-11-04": 1
       },
       "coachStats": {
@@ -17797,6 +17798,39 @@
           "avgToiletRating": 3,
           "avgDustbinRating": 0
         },
+        "S2": {
+          "feedbackCount": 1,
+          "sumGeneralRating": 2,
+          "sumFloorRating": 0,
+          "sumToiletRating": 0,
+          "sumDustbinRating": 0,
+          "ratingCounts": {
+            "generalCoach": 1,
+            "coachFloor": 0,
+            "toilet": 0,
+            "dustbin": 0
+          },
+          "statusCounts": {
+            "coachFloorStatus": {},
+            "toilet1Status": {},
+            "toilet2Status": {},
+            "dustbin1Status": {},
+            "dustbin2Status": {}
+          },
+          "booleanCounts": {
+            "toilet1Trash": 0,
+            "toilet2Trash": 0,
+            "toilet1WaterNA": 0,
+            "toilet2WaterNA": 0
+          },
+          "feedbacksByDate": {
+            "2026-11-05": 1
+          },
+          "avgGeneralRating": 2,
+          "avgFloorRating": 0,
+          "avgToiletRating": 0,
+          "avgDustbinRating": 0
+        },
         "B1": {
           "feedbackCount": 1,
           "sumGeneralRating": 0,
@@ -17833,7 +17867,7 @@
           "avgDustbinRating": 0
         }
       },
-      "avgGeneralRating": 0,
+      "avgGeneralRating": 2,
       "avgFloorRating": 0,
       "avgToiletRating": 3,
       "avgDustbinRating": 0
